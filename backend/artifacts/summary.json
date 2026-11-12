@@ -1,0 +1,404 @@
+{
+  "generated_at": "2026-11-12 03:55:01",
+  "today": "2026-11-10",
+  "history": {
+    "start": "2024-01-01",
+    "end": "2026-11-09",
+    "rows": 46980
+  },
+  "horizon": {
+    "start": "2026-11-16",
+    "end": "2027-02-14",
+    "weeks": 13
+  },
+  "n_items": 45,
+  "n_candidates": 585,
+  "n_viable": 577,
+  "forecast_backtest": {
+    "holdout_start": "2026-08-11",
+    "holdout_end": "2026-11-09",
+    "weekly_wape": 0.1253,
+    "weekly_wape_daily_only": 0.126,
+    "weekly_wape_naive": 0.1869,
+    "weekly_wape_ceiling": 0.1023,
+    "daily_wape": 0.2865,
+    "daily_wape_naive": 0.4022,
+    "daily_wape_ceiling": 0.2602,
+    "coverage_p10_p90": 0.8066,
+    "weekly_coverage_p10_p90": 0.7981,
+    "bias": -0.0121,
+    "interval_scale_daily": 1.2,
+    "interval_scale_weekly": 1.526
+  },
+  "unconstraining": {
+    "sold_out_day_share": 0.2664,
+    "hidden_demand_true": 282158,
+    "hidden_demand_recovered": 281843,
+    "sold_out_day_error_bookings": 0.3628,
+    "sold_out_day_error_unconstrained": 0.0901
+  },
+  "cancellation_model": {
+    "weekly_wape": 0.1738,
+    "weekly_wape_baseline": 0.1748,
+    "total_error": -0.0042
+  },
+  "supplier_rate_model": {
+    "mape": 0.0175,
+    "mape_baseline": 0.0652
+  },
+  "price_model": {
+    "weekly_mape": 0.026,
+    "weekly_mape_monthly_avg": 0.0328,
+    "peak_day_mape": 0.0576,
+    "peak_day_mape_monthly_avg": 0.0808
+  },
+  "elasticity": {
+    "mae": 0.154,
+    "bias": 0.012,
+    "corr": 0.836,
+    "mae_previous_method": 0.308
+  },
+  "elasticity_mae": 0.154,
+  "driver_importance": {
+    "Property / route baseline": 0.597,
+    "Same week last year": 0.1715,
+    "Seasonality": 0.0769,
+    "Day of week": 0.0445,
+    "Holidays & festivals": 0.0318,
+    "Recent demand level": 0.0272,
+    "Search momentum (look-to-book)": 0.0208,
+    "Growth trend": 0.016,
+    "Destination events": 0.0143
+  },
+  "total_capacity_cost": 1790088798.1551104,
+  "plan_backtest": {
+    "as_of": "2026-08-11",
+    "horizon_start": "2026-08-17",
+    "horizon_end": "2026-11-08",
+    "weeks": 12,
+    "budget": 750000000.0,
+    "risk_aversion": 0.3,
+    "ai": {
+      "positions": 540,
+      "invested": 651704772.0,
+      "predicted_profit": 123185983.0,
+      "realised_profit": 119720465.0,
+      "realised_roi": 0.1837,
+      "units": 61809,
+      "units_sold": 60776,
+      "sell_through": 0.9833,
+      "loss_making_positions": 4,
+      "prediction_gap": -0.0281
+    },
+    "greedy": {
+      "positions": 540,
+      "invested": 679077578.0,
+      "predicted_profit": 123717652.0,
+      "realised_profit": 119566712.0,
+      "realised_roi": 0.1761,
+      "units": 63830,
+      "units_sold": 62419,
+      "sell_through": 0.9779,
+      "loss_making_positions": 5,
+      "prediction_gap": -0.0336
+    },
+    "last_year": {
+      "positions": 540,
+      "invested": 688200545.0,
+      "predicted_profit": 87793991.0,
+      "realised_profit": 84025816.0,
+      "realised_roi": 0.1221,
+      "units": 63071,
+      "units_sold": 57228,
+      "sell_through": 0.9074,
+      "loss_making_positions": 87,
+      "prediction_gap": -0.0429
+    },
+    "weekly": [
+      {
+        "week": "2026-08-17",
+        "predicted_profit": 6915659.0,
+        "realised_profit": 6661703.0,
+        "invested": 39578276.0
+      },
+      {
+        "week": "2026-08-24",
+        "predicted_profit": 6867958.0,
+        "realised_profit": 6922431.0,
+        "invested": 39776918.0
+      },
+      {
+        "week": "2026-08-31",
+        "predicted_profit": 8123113.0,
+        "realised_profit": 5480248.0,
+        "invested": 46389631.0
+      },
+      {
+        "week": "2026-09-07",
+        "predicted_profit": 8271591.0,
+        "realised_profit": 7854693.0,
+        "invested": 44986802.0
+      },
+      {
+        "week": "2026-09-14",
+        "predicted_profit": 8292567.0,
+        "realised_profit": 7737271.0,
+        "invested": 43961171.0
+      },
+      {
+        "week": "2026-09-21",
+        "predicted_profit": 8441715.0,
+        "realised_profit": 8220199.0,
+        "invested": 44081807.0
+      },
+      {
+        "week": "2026-09-28",
+        "predicted_profit": 9206254.0,
+        "realised_profit": 10653191.0,
+        "invested": 48285540.0
+      },
+      {
+        "week": "2026-10-05",
+        "predicted_profit": 12232177.0,
+        "realised_profit": 12002872.0,
+        "invested": 65036454.0
+      },
+      {
+        "week": "2026-10-12",
+        "predicted_profit": 12404868.0,
+        "realised_profit": 12359280.0,
+        "invested": 63819321.0
+      },
+      {
+        "week": "2026-10-19",
+        "predicted_profit": 12655581.0,
+        "realised_profit": 13353223.0,
+        "invested": 63317831.0
+      },
+      {
+        "week": "2026-10-26",
+        "predicted_profit": 13271361.0,
+        "realised_profit": 11581197.0,
+        "invested": 69010698.0
+      },
+      {
+        "week": "2026-11-02",
+        "predicted_profit": 16503137.0,
+        "realised_profit": 16894157.0,
+        "invested": 83460324.0
+      }
+    ],
+    "top_positions": [
+      {
+        "cand_id": "F-BOM-DUB|2026-11-02",
+        "item_id": "F-BOM-DUB",
+        "name": "BOM \u2192 Dubai (group seats)",
+        "destination": "Dubai",
+        "week": "2026-11-02",
+        "units": 497.0,
+        "invested_planned": 6631968.0,
+        "invested_actual": 6373811.3,
+        "predicted_profit": 1353153.8,
+        "realised_profit": 1705636.1,
+        "predicted_demand": 1270.9,
+        "actual_demand": 616.5,
+        "sold": 497.0,
+        "cancel_rate_actual": 0.0
+      },
+      {
+        "cand_id": "F-DEL-DUB|2026-11-02",
+        "item_id": "F-DEL-DUB",
+        "name": "DEL \u2192 Dubai (group seats)",
+        "destination": "Dubai",
+        "week": "2026-11-02",
+        "units": 546.0,
+        "invested_planned": 8236410.0,
+        "invested_actual": 7947790.6,
+        "predicted_profit": 1341218.2,
+        "realised_profit": 1603181.6,
+        "predicted_demand": 1213.8,
+        "actual_demand": 937.2,
+        "sold": 546.0,
+        "cancel_rate_actual": 0.0
+      },
+      {
+        "cand_id": "F-DEL-LON|2026-10-19",
+        "item_id": "F-DEL-LON",
+        "name": "DEL \u2192 London (group seats)",
+        "destination": "London",
+        "week": "2026-10-19",
+        "units": 145.0,
+        "invested_planned": 5931370.0,
+        "invested_actual": 5949653.9,
+        "predicted_profit": 1359687.2,
+        "realised_profit": 1547555.0,
+        "predicted_demand": 438.8,
+        "actual_demand": 150.7,
+        "sold": 145.0,
+        "cancel_rate_actual": 0.0
+      },
+      {
+        "cand_id": "F-DEL-LON|2026-11-02",
+        "item_id": "F-DEL-LON",
+        "name": "DEL \u2192 London (group seats)",
+        "destination": "London",
+        "week": "2026-11-02",
+        "units": 175.0,
+        "invested_planned": 6938050.0,
+        "invested_actual": 6957974.8,
+        "predicted_profit": 1567436.0,
+        "realised_profit": 1533275.8,
+        "predicted_demand": 415.6,
+        "actual_demand": 227.0,
+        "sold": 175.0,
+        "cancel_rate_actual": 0.1
+      },
+      {
+        "cand_id": "F-DEL-LON|2026-10-26",
+        "item_id": "F-DEL-LON",
+        "name": "DEL \u2192 London (group seats)",
+        "destination": "London",
+        "week": "2026-10-26",
+        "units": 186.0,
+        "invested_planned": 7281342.0,
+        "invested_actual": 7256857.0,
+        "predicted_profit": 1425568.9,
+        "realised_profit": 1486039.6,
+        "predicted_demand": 393.3,
+        "actual_demand": 199.9,
+        "sold": 186.0,
+        "cancel_rate_actual": 0.0
+      },
+      {
+        "cand_id": "F-BOM-LON|2026-10-12",
+        "item_id": "F-BOM-LON",
+        "name": "BOM \u2192 London (group seats)",
+        "destination": "London",
+        "week": "2026-10-12",
+        "units": 155.0,
+        "invested_planned": 6792100.0,
+        "invested_actual": 6929436.2,
+        "predicted_profit": 1461880.9,
+        "realised_profit": 1443965.6,
+        "predicted_demand": 372.9,
+        "actual_demand": 174.6,
+        "sold": 155.0,
+        "cancel_rate_actual": 0.0
+      },
+      {
+        "cand_id": "F-DEL-BAN|2026-11-02",
+        "item_id": "F-DEL-BAN",
+        "name": "DEL \u2192 Bangkok (group seats)",
+        "destination": "Bangkok",
+        "week": "2026-11-02",
+        "units": 426.0,
+        "invested_planned": 6752526.0,
+        "invested_actual": 6825242.5,
+        "predicted_profit": 1456293.6,
+        "realised_profit": 1436925.0,
+        "predicted_demand": 963.8,
+        "actual_demand": 486.1,
+        "sold": 426.0,
+        "cancel_rate_actual": 0.0
+      },
+      {
+        "cand_id": "F-BOM-LON|2026-10-19",
+        "item_id": "F-BOM-LON",
+        "name": "BOM \u2192 London (group seats)",
+        "destination": "London",
+        "week": "2026-10-19",
+        "units": 150.0,
+        "invested_planned": 6609000.0,
+        "invested_actual": 6582739.5,
+        "predicted_profit": 1316368.4,
+        "realised_profit": 1355691.8,
+        "predicted_demand": 329.3,
+        "actual_demand": 193.8,
+        "sold": 150.0,
+        "cancel_rate_actual": 0.1
+      }
+    ],
+    "worst_positions": [
+      {
+        "cand_id": "F-DEL-BAL|2026-10-26",
+        "item_id": "F-DEL-BAL",
+        "name": "DEL \u2192 Bali (group seats)",
+        "destination": "Bali",
+        "week": "2026-10-26",
+        "units": 240.0,
+        "invested_planned": 5974080.0,
+        "invested_actual": 6048544.3,
+        "predicted_profit": 963421.9,
+        "realised_profit": -400768.5,
+        "predicted_demand": 397.2,
+        "actual_demand": 177.6,
+        "sold": 177.6,
+        "cancel_rate_actual": 0.1
+      },
+      {
+        "cand_id": "H-SIN-M|2026-10-19",
+        "item_id": "H-SIN-M",
+        "name": "Orchard Plaza Hotel",
+        "destination": "Singapore",
+        "week": "2026-10-19",
+        "units": 60.0,
+        "invested_planned": 472320.0,
+        "invested_actual": 480622.6,
+        "predicted_profit": 97209.0,
+        "realised_profit": -13411.9,
+        "predicted_demand": 181.8,
+        "actual_demand": 41.5,
+        "sold": 41.5,
+        "cancel_rate_actual": 0.1
+      },
+      {
+        "cand_id": "F-BLR-GOA|2026-10-26",
+        "item_id": "F-BLR-GOA",
+        "name": "BLR \u2192 Goa (group seats)",
+        "destination": "Goa",
+        "week": "2026-10-26",
+        "units": 248.0,
+        "invested_planned": 907184.0,
+        "invested_actual": 902774.1,
+        "predicted_profit": 187442.1,
+        "realised_profit": -10401.4,
+        "predicted_demand": 625.0,
+        "actual_demand": 187.6,
+        "sold": 187.6,
+        "cancel_rate_actual": 0.1
+      },
+      {
+        "cand_id": "H-MAN-M|2026-09-28",
+        "item_id": "H-MAN-M",
+        "name": "Solang Valley Retreat",
+        "destination": "Manali",
+        "week": "2026-09-28",
+        "units": 48.0,
+        "invested_planned": 255456.0,
+        "invested_actual": 252868.8,
+        "predicted_profit": 49851.0,
+        "realised_profit": -3063.1,
+        "predicted_demand": 160.3,
+        "actual_demand": 33.6,
+        "sold": 33.6,
+        "cancel_rate_actual": 0.1
+      },
+      {
+        "cand_id": "H-BAL-M|2026-08-31",
+        "item_id": "H-BAL-M",
+        "name": "Seminyak Garden Villas",
+        "destination": "Bali",
+        "week": "2026-08-31",
+        "units": 96.0,
+        "invested_planned": 644064.0,
+        "invested_actual": 755041.2,
+        "predicted_profit": 117400.6,
+        "realised_profit": 8516.8,
+        "predicted_demand": 141.3,
+        "actual_demand": 139.8,
+        "sold": 96.0,
+        "cancel_rate_actual": 0.1
+      }
+    ]
+  }
+}

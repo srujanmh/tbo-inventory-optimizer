@@ -1,0 +1,46 @@
+item_id,name,item_type,destination,tier,origin,unit,base_demand,ref_price,elasticity,salvage_rate,cancel_base,l2b,prebuy_discount,elasticity_est
+H-GOA-B,Calangute Bay Inn,Hotel,Goa,Budget,,room-night,36.58,3160.0,1.92,0.55,0.097,31.7,0.276,2.114482032003379
+H-GOA-M,Baga Palms Resort,Hotel,Goa,Midscale,,room-night,25.41,6020.0,1.23,0.41,0.155,27.0,0.282,1.2379248557470206
+H-GOA-L,Taj Fort Aguada Grand,Hotel,Goa,Luxury,,room-night,10.22,16550.0,0.82,0.26,0.148,26.8,0.276,0.3977856997265059
+H-JAI-B,Pink City Residency,Hotel,Jaipur,Budget,,room-night,24.87,3500.0,1.94,0.57,0.104,24.5,0.204,1.8365693567761892
+H-JAI-M,Amer View Hotel,Hotel,Jaipur,Midscale,,room-night,16.13,6740.0,1.37,0.5,0.113,23.2,0.247,1.2071172883182886
+H-JAI-L,Rambagh Heritage Palace,Hotel,Jaipur,Luxury,,room-night,7.25,16200.0,0.79,0.28,0.137,24.1,0.283,0.846974998210743
+H-UDA-B,Lakeside Haveli Stay,Hotel,Udaipur,Budget,,room-night,22.05,3080.0,1.9,0.57,0.117,22.0,0.268,1.7937818392565055
+H-UDA-M,Fateh Garden Hotel,Hotel,Udaipur,Midscale,,room-night,12.84,6110.0,1.0,0.47,0.137,27.9,0.278,1.1432572760489863
+H-UDA-L,Pichola Lake Palace,Hotel,Udaipur,Luxury,,room-night,6.32,17740.0,0.66,0.27,0.137,24.6,0.257,0.6618837209190093
+H-KOC-B,Fort Kochi Homestay,Hotel,Kochi,Budget,,room-night,23.86,3290.0,1.73,0.53,0.111,18.4,0.244,1.4488647188822696
+H-KOC-M,Marine Drive Suites,Hotel,Kochi,Midscale,,room-night,13.99,6380.0,1.43,0.39,0.094,21.9,0.229,1.2153013845512564
+H-KOC-L,Backwater Grand Resort,Hotel,Kochi,Luxury,,room-night,7.13,17700.0,0.91,0.35,0.118,29.4,0.217,0.9256590235200092
+H-MAN-B,Old Manali Lodge,Hotel,Manali,Budget,,room-night,20.05,2940.0,1.83,0.52,0.101,25.0,0.215,1.8055189093397885
+H-MAN-M,Solang Valley Retreat,Hotel,Manali,Midscale,,room-night,17.15,6430.0,1.19,0.4,0.134,23.1,0.209,1.1075856269903517
+H-MAN-L,Himalayan Spa Resort,Hotel,Manali,Luxury,,room-night,6.37,19120.0,0.96,0.35,0.109,31.6,0.278,0.8891371177284073
+H-DUB-B,Deira City Hotel,Hotel,Dubai,Budget,,room-night,33.23,4280.0,1.56,0.46,0.153,24.4,0.22,1.3201018878172712
+H-DUB-M,Marina Bay Suites,Hotel,Dubai,Midscale,,room-night,20.34,8910.0,1.09,0.48,0.143,28.1,0.243,0.9724484106344834
+H-DUB-L,Palm Jumeirah Royal,Hotel,Dubai,Luxury,,room-night,9.97,24020.0,0.86,0.26,0.119,18.6,0.249,0.9753721058423114
+H-BAN-B,Khao San Budget Inn,Hotel,Bangkok,Budget,,room-night,27.14,4010.0,1.46,0.54,0.102,31.0,0.258,1.5115937687201622
+H-BAN-M,Sukhumvit Central,Hotel,Bangkok,Midscale,,room-night,18.89,8930.0,1.01,0.49,0.124,29.0,0.208,0.9758599912493144
+H-BAN-L,Chao Phraya Riverside,Hotel,Bangkok,Luxury,,room-night,8.76,23580.0,0.98,0.34,0.123,21.7,0.233,0.9731685598830888
+H-SIN-B,Little India Pod Hotel,Hotel,Singapore,Budget,,room-night,26.16,4270.0,1.41,0.57,0.153,20.0,0.255,1.5731334185760697
+H-SIN-M,Orchard Plaza Hotel,Hotel,Singapore,Midscale,,room-night,15.89,9080.0,1.14,0.45,0.141,28.8,0.211,0.5856741853576224
+H-SIN-L,Marina Skyline Grand,Hotel,Singapore,Luxury,,room-night,9.0,22350.0,0.61,0.33,0.116,29.6,0.281,1.1459851167886945
+H-BAL-B,Kuta Surf Lodge,Hotel,Bali,Budget,,room-night,22.12,4710.0,1.57,0.53,0.108,31.1,0.216,1.6583570882884944
+H-BAL-M,Seminyak Garden Villas,Hotel,Bali,Midscale,,room-night,13.99,8660.0,1.5,0.48,0.142,30.5,0.289,1.4231958544159857
+H-BAL-L,Ubud Jungle Retreat,Hotel,Bali,Luxury,,room-night,7.24,22760.0,0.91,0.35,0.116,19.3,0.275,0.8574035466604154
+H-LON-B,Paddington Budget Rooms,Hotel,London,Budget,,room-night,18.11,4700.0,1.54,0.47,0.148,20.1,0.218,1.6363225398097871
+H-LON-M,Kensington Park Hotel,Hotel,London,Midscale,,room-night,13.9,9430.0,1.1,0.4,0.144,31.6,0.25,1.3162419200469917
+H-LON-L,Mayfair Grand,Hotel,London,Luxury,,room-night,5.36,21330.0,0.69,0.27,0.137,19.7,0.251,1.05118207541583
+F-DEL-GOA,DEL → Goa (group seats),Flight,Goa,Economy,DEL,seat,72.72,6280.0,1.04,0.31,0.069,14.2,0.15,1.1380645145774457
+F-BOM-GOA,BOM → Goa (group seats),Flight,Goa,Economy,BOM,seat,78.6,4490.0,1.18,0.21,0.06,13.6,0.216,1.0469963294875047
+F-BLR-GOA,BLR → Goa (group seats),Flight,Goa,Economy,BLR,seat,57.44,4380.0,0.92,0.26,0.065,9.7,0.151,1.2525154652293677
+F-DEL-JAI,DEL → Jaipur (group seats),Flight,Jaipur,Economy,DEL,seat,44.27,3550.0,1.32,0.34,0.072,12.3,0.203,1.5093186583371492
+F-BOM-UDA,BOM → Udaipur (group seats),Flight,Udaipur,Economy,BOM,seat,36.14,4500.0,1.48,0.31,0.049,12.7,0.188,1.6113966637381811
+F-DEL-KOC,DEL → Kochi (group seats),Flight,Kochi,Economy,DEL,seat,42.94,7320.0,1.19,0.22,0.057,13.6,0.209,1.2540184965839694
+F-DEL-MAN,DEL → Manali (group seats),Flight,Manali,Economy,DEL,seat,29.72,7490.0,1.07,0.3,0.073,9.7,0.145,0.8829549914703111
+F-DEL-DUB,DEL → Dubai (group seats),Flight,Dubai,Economy,DEL,seat,81.51,15570.0,1.48,0.21,0.046,15.4,0.153,1.7190849001699036
+F-BOM-DUB,BOM → Dubai (group seats),Flight,Dubai,Economy,BOM,seat,86.12,13700.0,0.98,0.15,0.042,10.2,0.144,0.82895467860865
+F-DEL-BAN,DEL → Bangkok (group seats),Flight,Bangkok,Economy,DEL,seat,66.18,18010.0,1.18,0.21,0.06,15.1,0.208,1.1930269676475735
+F-BOM-SIN,BOM → Singapore (group seats),Flight,Singapore,Economy,BOM,seat,49.98,19930.0,1.07,0.2,0.063,11.9,0.144,1.4046534546236764
+F-BLR-SIN,BLR → Singapore (group seats),Flight,Singapore,Economy,BLR,seat,43.86,19570.0,0.97,0.32,0.042,15.5,0.148,1.0270447626602
+F-DEL-BAL,DEL → Bali (group seats),Flight,Bali,Economy,DEL,seat,37.41,30870.0,1.59,0.31,0.071,13.5,0.202,1.721858209638226
+F-BOM-LON,BOM → London (group seats),Flight,London,Economy,BOM,seat,32.44,52300.0,1.26,0.32,0.059,11.7,0.191,1.353937360011689
+F-DEL-LON,DEL → London (group seats),Flight,London,Economy,DEL,seat,38.13,47120.0,1.23,0.23,0.049,11.6,0.169,1.053421641868531

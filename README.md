@@ -147,12 +147,21 @@ This test plans as if today were **11 Aug 2026**:
 
 ## Deploy to Vercel
 
-The repo includes a `vercel.json`, so deployment needs no settings:
+The repo deploys as one Vercel project with two **services** (see `vercel.json`):
+
+| Service | Root | Framework | Public path |
+|---|---|---|---|
+| `backend` | `backend/` | FastAPI (`app:app`) | `/api/*` |
+| `frontend` | `frontend/` | Vite (React) | everything else |
 
 1. Go to **vercel.com → Add New → Project → Import** this repository.
-2. Click **Deploy**.
+2. Click **Deploy**. No settings or environment variables are required.
 
-Vercel builds the static website from `frontend/` (`npm run build:site` → `frontend/dist-site`). The whole decision engine runs in the visitor's browser, so no server is needed.
+The browser talks to the API on the same domain through relative `/api/...` URLs, so no service bindings are needed. The backend loads the trained models from `backend/artifacts/` (committed to the repo); to retrain, run `python -m pipeline.train` locally and commit the new artifacts. Optional: set `ANTHROPIC_API_KEY` on the project to get AI-written plan explanations.
+
+Test locally with `vercel dev`, or run the backend and `npm run dev` as below.
+
+A fully static, browser-only build is still available with `npm run build:site` (output `frontend/dist-site`).
 
 ## Run it
 
@@ -168,7 +177,7 @@ Manual steps:
 
 ```bash
 cd backend
-pip install -r requirements.txt
+pip install -r requirements-train.txt
 python -m pipeline.generate_data   # ~5 s  → backend/data/*.csv
 python -m pipeline.train           # ~2 min → backend/artifacts/ (includes forecast back-test + plan back-test)
 uvicorn app:app --port 8000        # API + built dashboard

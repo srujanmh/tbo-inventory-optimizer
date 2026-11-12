@@ -1,0 +1,3 @@
+# Everything needed to regenerate data and retrain (python -m pipeline.train)
+-r requirements.txt
+lightgbm>=4.3
