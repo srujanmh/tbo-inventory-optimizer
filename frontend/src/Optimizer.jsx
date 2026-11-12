@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, Cell } from 'recharts'
 import { api, inr, pct, num, shortWeek } from './api'
-import { Card, Kpi, KpiRow, Pill, RiskPill, Loading, COLORS, DEST_COLORS, EASE, tip, pnlTone, pnlFill, Pnl } from './ui'
+import { Card, Kpi, KpiRow, Pill, RiskPill, Loading, COLORS, DEST_COLORS, EASE, tip, pnlTone, pnlFill, Pnl, Sim } from './ui'
 import { STATIC, DEFAULT_SETTINGS } from './api'
 
 const crore = (v) => `₹${(v / 1e7).toFixed(0)}Cr`
@@ -85,8 +85,25 @@ function Explain({ row, onClose, openForecast }) {
         </KpiRow>
         <h4>Why this recommendation</h4>
         {!txt ? <Loading text="Writing explanation…" /> : <>
-          <p className="explain">{txt.explanation}</p>
+          {(txt.sections || [{ title: 'Summary', text: txt.explanation }]).map((x) => (
+            <div className="xsec" key={x.title}><h5>{x.title}</h5><p>{x.text}</p></div>))}
           {txt.llm && <><h4>AI analyst note</h4><p className="explain ai">{txt.llm}</p></>}
+        </>}
+        {row.suppliers?.length > 0 && <>
+          <h4>Supplier comparison for this item-week</h4>
+          <div className="tbl-wrap"><table>
+            <thead><tr><th>Supplier</th><th className="r">Quote</th><th className="r">Effective cost</th><th className="r">Confirms</th><th className="r">Refund</th><th className="r">Exp. profit</th></tr></thead>
+            <tbody>{row.suppliers.map((o) => (
+              <tr key={o.supplier_id} className={`nohover ${o.supplier_id === row.supplier_id ? 'chosen-row' : ''}`}>
+                <td>{o.supplier}{o.supplier_id === row.supplier_id && <Pill tone="green">chosen</Pill>}{!o.eligible && <small className="muted"><br />{o.reason}</small>}</td>
+                <td className="r">{o.eligible ? inr(o.supplier_cost) : '–'}</td>
+                <td className="r">{o.eligible ? inr(o.effective_cost) : '–'}</td>
+                <td className="r">{pct(o.reliability, 0)}</td>
+                <td className="r">{pct(o.refund_rate, 0)}</td>
+                <td className={`r ${o.eligible ? pnlTone(o.exp_profit || 0) : ''}`}>{o.eligible ? inr(o.exp_profit || 0) : '–'}</td>
+              </tr>))}</tbody>
+          </table></div>
+          <p className="note">Effective cost = quote + (1 − confirmation rate) × extra cost of re-buying unconfirmed units at the last-minute rate. Expected profit is each supplier at its own best price and quantity, on the same 1,000 demand scenarios.</p>
         </>}
         <h4>Demand drivers this week (SHAP, vs. an average day)</h4>
         <div className="drivers">
@@ -105,7 +122,7 @@ function Explain({ row, onClose, openForecast }) {
   )
 }
 
-const CSV_COLS = ['name', 'item_type', 'destination', 'week', 'units', 'unit', 'unit_cost', 'investment', 'buy_by', 'sell_price', 'market_price', 'expected_profit', 'worst5_profit', 'sell_through', 'sold_out_risk', 'demand_p50']
+const CSV_COLS = ['name', 'item_type', 'destination', 'week', 'units', 'unit', 'unit_cost', 'investment', 'supplier', 'buy_by', 'sell_price', 'market_price', 'expected_profit', 'worst5_profit', 'sell_through', 'sold_out_risk', 'demand_p50']
 const toCsv = (plan) => [CSV_COLS.join(','), ...plan.map((r) => CSV_COLS.map((c) => JSON.stringify(typeof r[c] === 'number' ? Math.round(r[c] * 1000) / 1000 : (r[c] ?? ''))).join(','))].join('\n')
 
 function downloadCsv(plan) {
@@ -166,16 +183,27 @@ export default function Optimizer({ summary, settings, setSettings, openForecast
         {!res ? <Loading text="Solving allocation…" /> : <>
           <KpiRow className={`four ${busy ? 'dim' : ''}`}>
             <Kpi label="Capital deployed" num={s.invested} fmt={(v) => inr(v)} hint={`${pct(s.budget_used, 0)} of ${inr(s.budget, 0)} budget`} />
-            <Kpi label="Expected profit" num={s.expected_profit} fmt={(v) => inr(v)} hint={`ROI ${pct(s.roi)}`} tone={pnlTone(s.expected_profit)} />
+            <Kpi label={<>Expected profit<Sim /></>} num={s.expected_profit} fmt={(v) => inr(v)} hint={`ROI ${pct(s.roi)} · average of simulated futures`} tone={pnlTone(s.expected_profit)} />
             <Kpi label="Worst-10% profit" num={s.cvar10} fmt={(v) => inr(v)} hint={`P(loss) ${pct(s.prob_loss)}`} tone={pnlTone(s.cvar10)} />
             {uplift !== null
-              ? <Kpi label="vs last year's mix" num={uplift} fmt={(v) => `${v >= 0 ? '+' : ''}${pct(v)}`} hint={`${gain >= 0 ? '+' : ''}${inr(gain)} expected profit`} tone={pnlTone(uplift)} />
-              : <Kpi label="vs last year's mix" num={gain} fmt={(v) => `${v >= 0 ? '+' : ''}${inr(v)}`} hint={<>last year's mix would <span className="txt-bad">lose {inr(-lyProfit)}</span></>} tone={pnlTone(gain)} />}
+              ? <Kpi label={<>Expected uplift vs last year's mix<Sim /></>} num={uplift} fmt={(v) => `${v >= 0 ? '+' : ''}${pct(v)}`} hint={`${gain >= 0 ? '+' : ''}${inr(gain)} · forward-looking forecast, not the back-test`} tone={pnlTone(uplift)} />
+              : <Kpi label={<>Expected uplift vs last year's mix<Sim /></>} num={gain} fmt={(v) => `${v >= 0 ? '+' : ''}${inr(v)}`} hint={<>last year's mix would <span className="txt-bad">lose {inr(-lyProfit)}</span></>} tone={pnlTone(gain)} />}
             <Kpi label="Inventory secured" num={s.units} fmt={num} hint={`${pct(s.sell_through, 0)} expected sell-through`} />
             <Kpi label="In sold-out windows" num={s.units_in_soldout_windows} fmt={num} hint="bookable units where supply usually runs out" tone="warn" />
-            <Kpi label="Saved by buying early" num={s.saving_vs_wait} fmt={(v) => inr(v)} hint="vs last-minute supplier rates" />
+            <Kpi label={<>Saved by buying early<Sim /></>} num={s.saving_vs_wait} fmt={(v) => inr(v)} hint="vs predicted last-minute supplier rates" />
             <Kpi label="Positions" num={s.n_positions} fmt={num} hint={`solver: ${s.status}`} />
           </KpiRow>
+
+          {res.unused_budget && res.unused_budget.unused > 0.01 * s.budget && (
+            <Card title={`Why ${inr(res.unused_budget.unused)} (${pct(res.unused_budget.unused_share, 0)}) of the budget is not invested`}
+              sub="The optimizer only spends money where one more unit still adds risk-adjusted profit">
+              <p className="lead">{res.unused_budget.summary}</p>
+              {res.unused_budget.reasons.length > 0 && <div className="reasons">
+                {res.unused_budget.reasons.map((r) => (
+                  <div className="reason" key={r.code}><div>{r.label}<small>{r.positions} positions affected</small></div>
+                    <b>{inr(r.blocked_cost)} <small>profitable stock left out</small></b></div>))}
+              </div>}
+            </Card>)}
 
           <div className="row2">
             <Card title="Strategy comparison" sub={`Same budget, three ways to spend it (Monte Carlo, ${STATIC ? 300 : '1,000'} scenarios)`}>
@@ -255,7 +283,7 @@ export default function Optimizer({ summary, settings, setSettings, openForecast
               <table>
                 <thead><tr>
                   {th('name', 'Inventory')}{th('week', 'Travel week')}{th('units', 'Units', 'r')}{th('unit_cost', 'Unit cost', 'r')}
-                  {th('investment', 'Investment', 'r')}{th('buy_by', 'Buy by')}{th('sell_price', 'Sell price', 'r')}
+                  {th('investment', 'Investment', 'r')}{th('supplier', 'Supplier')}{th('buy_by', 'Buy by')}{th('sell_price', 'Sell price', 'r')}
                   {th('demand_p50', 'Demand P50', 'r')}{th('expected_profit', 'Exp. profit', 'r')}{th('sell_through', 'Sell-through', 'r')}{th('sold_out_risk', 'Sold-out risk', 'r')}
                 </tr></thead>
                 <tbody>
@@ -267,6 +295,7 @@ export default function Optimizer({ summary, settings, setSettings, openForecast
                       <td className="r">{num(r.units)}</td>
                       <td className="r">{inr(r.unit_cost)}</td>
                       <td className="r"><b>{inr(r.investment)}</b></td>
+                      <td><small>{r.supplier || '–'}</small></td>
                       <td>{r.buy_by}</td>
                       <td className="r">{inr(r.sell_price)} <small className={r.sell_price >= r.market_price ? 'up' : 'down'}>{r.sell_price >= r.market_price ? '+' : ''}{pct(r.sell_price / r.market_price - 1, 0)}</small></td>
                       <td className="r">{num(r.demand_p50)}</td>

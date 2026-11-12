@@ -7,13 +7,21 @@ import Optimizer from './Optimizer'
 import Forecasts from './Forecasts'
 import Risk from './Risk'
 import Home from './Home'
+import Scenarios from './Scenarios'
+import Suppliers from './Suppliers'
+import Accuracy from './Accuracy'
+import DataSources from './DataSources'
 
 const TABS = [
   ['home', 'How it works'],
   ['optimizer', 'Budget Optimizer'],
+  ['scenarios', 'What-if & Re-planning'],
+  ['suppliers', 'Suppliers'],
   ['overview', 'Demand & Opportunities'],
   ['forecasts', 'Forecast Explorer'],
+  ['accuracy', 'Accuracy & Validation'],
   ['risk', 'Risk & Budget Strategy'],
+  ['data', 'Data Sources'],
 ]
 const TAB_KEYS = TABS.map(([k]) => k)
 
@@ -100,6 +108,10 @@ export default function App() {
           </div>
         </header>
         <main id="main-content" tabIndex={-1}>
+          {summary.data_source !== 'real' && (
+            <div className="sim-bar" role="note"><b>Simulated data</b>
+              <span>Every figure comes from a synthetic dataset built to behave like TBO's business. It shows how the method works; it is not a record of actual TBO revenue or savings. Real data can be connected under <button className="link inline" onClick={() => go('data')}>Data Sources</button>.</span>
+            </div>)}
           <AnimatePresence mode="wait">
             <motion.div key={tab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}>
@@ -108,10 +120,14 @@ export default function App() {
               {tab === 'overview' && <Overview summary={summary} openForecast={openForecast} />}
               {tab === 'forecasts' && <Forecasts itemId={forecastItem} setItemId={setForecastItem} />}
               {tab === 'risk' && <Risk settings={settings} />}
+              {tab === 'scenarios' && <Scenarios summary={summary} settings={settings} go={go} />}
+              {tab === 'suppliers' && <Suppliers summary={summary} />}
+              {tab === 'accuracy' && <Accuracy summary={summary} settings={settings} />}
+              {tab === 'data' && <DataSources summary={summary} />}
             </motion.div>
           </AnimatePresence>
         </main>
-        <footer>Built by Team Void · Synthetic data for demonstration · LightGBM quantile forecasts · Monte Carlo risk · {STATIC ? 'in-browser optimizer (matches the HiGHS MILP within 0.2%)' : 'MILP (HiGHS) allocation'}</footer>
+        <footer>Built by Team Void · Simulated (synthetic) data — not actual TBO results · LightGBM quantile forecasts · Monte Carlo risk · {STATIC ? 'in-browser optimizer (matches the HiGHS MILP within 0.2%)' : 'MILP (HiGHS) allocation'}</footer>
       </div>
     </MotionConfig>
   )

@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts'
 import { api, inr, pct, num, shortWeek } from './api'
-import Backtest from './Backtest'
 import { Card, Kpi, KpiRow, Pill, RiskPill, Loading, COLORS, tip, pnlTone } from './ui'
 
 const METRICS = {
@@ -42,31 +41,6 @@ function Heatmap({ summary }) {
   )
 }
 
-export function Scorecard({ summary }) {
-  const bt = summary.forecast_backtest, un = summary.unconstraining, el = summary.elasticity
-  const cm = summary.cancellation_model, rm = summary.supplier_rate_model, prm = summary.price_model
-  const rows = [
-    ['Weekly demand forecast', 'Error (WAPE) per item-week', pct(bt.weekly_wape), pct(bt.weekly_wape_naive), 'Same week last year', pct(bt.weekly_wape_ceiling), pct(1 - bt.weekly_wape)],
-    ['Daily demand forecast', 'Error (WAPE) per item-day', pct(bt.daily_wape), pct(bt.daily_wape_naive), 'Same weekday last year', pct(bt.daily_wape_ceiling), pct(1 - bt.daily_wape)],
-    ['Forecast intervals', 'P10–P90 coverage (target 80%)', `${pct(bt.coverage_p10_p90, 0)} daily · ${pct(bt.weekly_coverage_p10_p90, 0)} weekly`, '74% before calibration', 'Uncalibrated model', '80%', '–'],
-    ['Sold-out demand recovery', 'Error on sold-out days', pct(un.sold_out_day_error_unconstrained), pct(un.sold_out_day_error_bookings), 'Raw bookings', '0%', pct(1 - un.sold_out_day_error_unconstrained)],
-    ['Price elasticity', 'Mean abs. error vs. truth', el.mae.toFixed(3), el.mae_previous_method.toFixed(3), 'Open-days-only regression', '0', `r = ${el.corr}`],
-    ['Supplier rates (buy timing)', 'Cost error (MAPE)', pct(rm.mape), pct(rm.mape_baseline), 'Item × lead-time average', '–', pct(1 - rm.mape)],
-    ...(prm ? [['Market selling price', 'Weekly price error (MAPE)', `${pct(prm.weekly_mape)} · peaks ${pct(prm.peak_day_mape)}`, `${pct(prm.weekly_mape_monthly_avg)} · peaks ${pct(prm.peak_day_mape_monthly_avg)}`, 'Monthly average price', '–', pct(1 - prm.weekly_mape)]] : []),
-    ['Cancellations', 'Weekly count error (WAPE)', pct(cm.weekly_wape), pct(cm.weekly_wape_baseline), "Item's historical rate", '–', pct(1 - cm.weekly_wape)],
-  ]
-  return (
-    <Card title="Model accuracy scorecard" sub={`Every model scored out-of-sample on ${bt.holdout_start} → ${bt.holdout_end} (never seen in training). "Best possible" is the irreducible noise in the data.`}>
-      <div className="tbl-wrap"><table>
-        <thead><tr><th>Model</th><th>Metric</th><th className="r">Ours</th><th className="r">Baseline</th><th>Baseline method</th><th className="r">Best possible</th><th className="r">Accuracy</th></tr></thead>
-        <tbody>{rows.map((r) => (
-          <tr key={r[0]} className="nohover"><td><b>{r[0]}</b></td><td>{r[1]}</td><td className="r good">{r[2]}</td><td className="r">{r[3]}</td><td><small>{r[4]}</small></td><td className="r">{r[5]}</td><td className="r"><b>{r[6]}</b></td></tr>
-        ))}</tbody>
-      </table></div>
-    </Card>
-  )
-}
-
 export default function Overview({ summary, openForecast }) {
   const [opps, setOpps] = useState(null)
   useEffect(() => { api.opportunities(15).then(setOpps) }, [])
@@ -76,14 +50,12 @@ export default function Overview({ summary, openForecast }) {
   return (
     <div className="stack">
       <KpiRow>
-        <Kpi label="Weekly forecast accuracy" num={1 - bt.weekly_wape} fmt={(v) => pct(v)} hint={`best possible ${pct(1 - bt.weekly_wape_ceiling)} · naive ${pct(1 - bt.weekly_wape_naive)}`} tone="good" />
+        <Kpi label="Forecast accuracy (weekly)" num={1 - bt.weekly_wape} fmt={(v) => pct(v)} hint={`= 1 − WAPE · naive ${pct(1 - bt.weekly_wape_naive)} · details in Accuracy & Validation`} tone="good" />
         <Kpi label="P10–P90 interval coverage" value={pct(bt.coverage_p10_p90, 0)} hint={`target 80% · holdout ${bt.holdout_start} → ${bt.holdout_end}`} />
         <Kpi label="Hidden demand on sold-out days" num={un.hidden_demand_recovered} fmt={num} hint={`error ${pct(un.sold_out_day_error_bookings, 0)} → ${pct(un.sold_out_day_error_unconstrained, 0)} after unconstraining`} tone="warn" />
         <Kpi label="High sold-out-risk windows" num={summary.high_risk_windows} fmt={num} hint={`of ${summary.n_candidates} item-weeks ahead`} tone="warn" />
         <Kpi label="Opportunity pool" value={inr(summary.full_plan_cost, 0)} hint={`${summary.n_viable} profitable item-weeks · avg ROI ${pct(summary.avg_roi)}`} />
       </KpiRow>
-      <Scorecard summary={summary} />
-      <Backtest summary={summary} />
       <Heatmap summary={summary} />
       <div className="row2 wide-left">
         <Card title="Top pre-buy opportunities" sub="Ranked by ROI at the optimal quantity, sold-out pressure and forecast confidence">

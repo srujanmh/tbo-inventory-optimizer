@@ -16,15 +16,17 @@ from .config import COMPETITIVE_ELASTICITY, LEAD_OPTIONS
 from . import models as M
 from .candidates import build_candidates, season_proxy_from
 from .optimizer import Optimizer
+from .suppliers import supplier_scorecard
 
 
-def _realise(opt: Optimizer, k_sel, items, truth, daily, quotes):
+def _realise(opt: Optimizer, k_sel, items, truth, daily, quotes, sup_truth=None):
     it = items.set_index("item_id")
     tw = truth.assign(week=truth.date - pd.to_timedelta(truth.date.dt.dayofweek, unit="D")) \
         .groupby(["item_id", "week"]).true_demand.sum()
     dw = daily.assign(week=daily.date - pd.to_timedelta(daily.date.dt.dayofweek, unit="D")) \
         .groupby(["item_id", "week"])[["bookings", "cancellations"]].sum()
     q = quotes.set_index(["item_id", "travel_week_start", "lead_days"]).cost_multiplier
+    st = sup_truth.set_index(["item_id", "supplier_id"]) if sup_truth is not None else None
     rows = []
     for i, k in enumerate(k_sel):
         if k <= 0:
@@ -33,15 +35,25 @@ def _realise(opt: Optimizer, k_sel, items, truth, daily, quotes):
         week = pd.Timestamp(c.week)
         Q = float(b["levels"][k])
         p = float(c.sell_price)
-        e_true = float(it.loc[c.item_id, "elasticity"])
+        e_true = float(it.loc[c.item_id, "elasticity"]) if "elasticity" in it else float(c.elasticity)
         D = float(tw.get((c.item_id, week), 0.0)) * float(c.price_mult) ** (-(e_true + COMPETITIVE_ELASTICITY))
         bk = dw.loc[(c.item_id, week)] if (c.item_id, week) in dw.index else None
         cr = float(bk.cancellations / bk.bookings) if bk is not None and bk.bookings > 0 else float(c.cancel_rate)
         lead = min(LEAD_OPTIONS, key=lambda l: abs(l - int(c.buy_lead_days)))
+        ref = float(it.loc[c.item_id, "ref_price"])
         mult = q.get((c.item_id, week, lead), np.nan)
-        cost = float(mult * it.loc[c.item_id, "ref_price"]) if not np.isnan(mult) else float(c.unit_cost)
+        bench = float(mult * ref) if not np.isnan(mult) else float(c.unit_cost)
+        late = q.get((c.item_id, week, min(LEAD_OPTIONS)), np.nan)
+        c_wait = float(late * ref) if not np.isnan(late) else bench
+        if st is not None and isinstance(c.get("supplier_id"), str) and (c.item_id, c.supplier_id) in st.index:
+            tr = st.loc[(c.item_id, c.supplier_id)]       # the supplier's TRUE behaviour, unknown to the planner
+            c_s, rel, refund = bench * float(tr.price_index), float(tr.reliability), float(tr.refund_rate)
+        else:
+            c_s, rel, refund = bench, 1.0, float(c.salvage_rate)
+        cost_total = c_s * Q + (1 - rel) * Q * max(c_wait - c_s, 0.0)   # unconfirmed units re-bought late
+        cost = cost_total / Q
         S = min(Q, D)
-        realised = p * (S - S * cr) + float(c.salvage_rate) * cost * (Q - S) - cost * Q
+        realised = p * (S - S * cr) + refund * c_s * (Q - S) - cost_total
         rows.append(dict(cand_id=c.cand_id, item_id=c.item_id, name=c["name"], destination=c.destination, week=c.week,
                          units=Q, invested_planned=Q * float(c.unit_cost), invested_actual=Q * cost,
                          predicted_profit=float(b["profit_levels"][:, k].mean()), realised_profit=realised,
@@ -64,7 +76,7 @@ def _summ(df):
 
 
 def run_plan_backtest(items, cal, d, feat, quotes, truth, daily, fc_holdout, as_of, n_weeks=12,
-                      budget=75e7, lam=0.3, max_dest_share=0.30, log=print):
+                      budget=75e7, lam=0.3, max_dest_share=0.30, sup=None, sup_hist=None, sup_truth=None, log=print):
     as_of = pd.Timestamp(as_of)
     d_hist = d[d.date < as_of]
     feat_hist = feat[feat.date < as_of]
@@ -78,16 +90,17 @@ def run_plan_backtest(items, cal, d, feat, quotes, truth, daily, fc_holdout, as_
     pmodel = M.fit_price_model(feat_hist)
 
     cands, blocks, _ = build_candidates(items, cal, d_hist, feat_hist, fc_holdout, cmodel, rmodel, el, price_idx, sp,
-                                        as_of, horizon_start, n_weeks, pmodel=pmodel)
+                                        as_of, horizon_start, n_weeks, pmodel=pmodel,
+                                        scorecard=supplier_scorecard(sup, sup_hist, as_of) if sup is not None else None)
     opt = Optimizer(cands, blocks)
     log(f"plan back-test: {int(cands.viable.sum())} viable candidates as of {as_of.date()}")
 
     res = opt.solve(budget, lam=lam, max_dest_share=max_dest_share)
-    ai = _realise(opt, res["k_sel"], items, truth, daily, quotes)
+    ai = _realise(opt, res["k_sel"], items, truth, daily, quotes, sup_truth)
     opt.greedy(budget)
-    gr = _realise(opt, opt.last_k, items, truth, daily, quotes)
+    gr = _realise(opt, opt.last_k, items, truth, daily, quotes, sup_truth)
     opt.last_year(budget)
-    ly = _realise(opt, opt.last_k, items, truth, daily, quotes)
+    ly = _realise(opt, opt.last_k, items, truth, daily, quotes, sup_truth)
 
     weekly = ai.groupby("week").agg(predicted_profit=("predicted_profit", "sum"), realised_profit=("realised_profit", "sum"),
                                     invested=("invested_actual", "sum")).reset_index()

@@ -18,10 +18,12 @@ Every position comes with expected profit, worst-case profit and a plain-English
 
 | Item | Where |
 |---|---|
-| 10-slide presentation | https://claude.ai/artifact/RZRwhzG6t7XW9f32pmHgpo (export to PPTX or PDF from the deck) |
-| Live prototype | https://tbo-inventory-optimizer-sggo.vercel.app (FastAPI + MILP on Vercel) · browser-only copy: https://claude.ai/artifact/XM6d4qBCJyEeFcAQNUKR3n |
+| Live prototype | https://tbo-inventory-optimizer-sggo.vercel.app (FastAPI + MILP on Vercel) |
 | Code | https://github.com/srujanmh/tbo-inventory-optimizer |
-| Pitch video | `docs/TBO_Inventory_Intelligence_pitch.mp4` (2:11, 1080p, voice-over and captions) |
+| **Video pitch (no voice, on-screen captions)** | [`docs/TBO_Inventory_Intelligence_pitch_silent.mp4`](docs/TBO_Inventory_Intelligence_pitch_silent.mp4) (3:31, 1080p, current version) |
+| **Project report** | [`docs/TBO_Inventory_Intelligence_report.pdf`](docs/TBO_Inventory_Intelligence_report.pdf) (9 pages) · editable version: https://claude.ai/artifact/TnxtE9BakzNaXHrdMgUrGF |
+| 10-slide presentation | https://claude.ai/artifact/RZRwhzG6t7XW9f32pmHgpo (export to PPTX or PDF from the deck) |
+| Earlier video with voice-over | `docs/TBO_Inventory_Intelligence_pitch.mp4` (2:11; shows the earlier version and its earlier figures) |
 | Video pitch script | `docs/video_pitch_script.md` |
 | Architecture diagram | `docs/architecture.png` (editable `docs/architecture.svg`) |
 
@@ -122,26 +124,31 @@ This test plans as if today were **11 Aug 2026**:
 
 | Strategy (₹75 Cr budget) | Invested | Predicted profit | **Realised profit** | Realised ROI | Loss-making positions |
 |---|---|---|---|---|---|
-| **AI optimizer (MILP)** | ₹65.2 Cr | ₹12.32 Cr | **₹11.97 Cr** | **18.4%** | 4 of 540 |
-| Greedy ROI ranking | ₹67.9 Cr | ₹12.37 Cr | ₹11.96 Cr | 17.6% | 5 |
-| Last year's mix | ₹68.8 Cr | ₹8.78 Cr | ₹8.40 Cr | 12.2% | 87 |
+| **AI optimizer (MILP)** | ₹64.1 Cr | ₹12.04 Cr | **₹11.74 Cr** | **18.3%** | 3 of 495 |
+| Greedy ROI ranking | ₹66.7 Cr | ₹12.10 Cr | ₹11.98 Cr | 18.0% | 4 |
+| Last year's mix | ₹68.8 Cr | ₹7.63 Cr | ₹7.30 Cr | 10.6% | 95 |
 
 **Takeaways:**
 - Realised profit came within **3%** of the prediction, so the risk model is well calibrated.
-- The AI plan earned **+42%** more than copying last year's mix.
-- It matched the greedy baseline's profit with **₹2.7 Cr less capital**.
-- It also chose not to spend the last ₹10 Cr, because no remaining option was worth the risk.
+- The AI plan earned **+61%** more than copying last year's mix.
+- The greedy baseline earned ₹0.24 Cr more but needed **₹2.6 Cr more capital**; the optimizer's return per rupee is higher.
+- It chose not to spend the last ₹10.9 Cr, because no remaining option added risk-adjusted profit. The app explains this under the KPIs whenever budget is left unused.
+- The replay includes each supplier's actual confirmation failures (re-bought at the last-minute rate) and actual refunds on released stock.
+
+**All results are on the synthetic dataset: they show the method works, they are not actual TBO profit or savings.** The realised back-test (+61%) and the forward-looking expected uplift (+28.5%, below) are different measurements and are shown separately in the app.
 
 ## Results on the bundled dataset (live plan, budget ₹75 Cr, λ = 0.3)
 
+These figures now include supplier choice (6 suppliers with different prices, availability, reliability and refund terms), which is why they differ slightly from earlier versions.
+
 | Strategy | Expected profit | Worst-10% avg profit | ROI |
 |---|---|---|---|
-| **AI optimizer (MILP)** | **₹13.93 Cr** | **₹12.89 Cr** | **18.6%** |
-| Greedy ROI ranking | ₹13.52 Cr | ₹11.20 Cr | 18.0% |
-| Last year's mix | ₹10.94 Cr | ₹9.74 Cr | 16.5% |
+| **AI optimizer (MILP)** | **₹13.53 Cr** | **₹12.30 Cr** | **18.1%** |
+| Greedy ROI ranking | ₹13.32 Cr | ₹11.01 Cr | 17.8% |
+| Last year's mix | ₹10.53 Cr | ₹9.36 Cr | 15.6% |
 
-- Compared with last year's mix, the plan earns **+27% expected profit**, with a better worst case.
-- Buying at the recommended lead times saves about **₹6.6 Cr** compared with last-minute supplier rates.
+- Compared with last year's mix, the plan earns **+28.5% expected profit** (forecast, simulated), with a better worst case.
+- Buying at the recommended lead times saves about **₹7.6 Cr** compared with last-minute supplier rates.
 - About **44,000** of the bookable units the plan secures fall in weeks where supply historically sells out.
 - **The New Year week (28 Dec) gets little budget on purpose.** The planning date is 10 Nov, so the longest available lead time is 45 days. Supplier quotes at that lead are about 18% above 120-day quotes, which is enough to wipe out the margin. Buying peak weeks earlier pays.
 
@@ -216,7 +223,9 @@ How the static build works:
 - Keyboard support: rows open with Enter, the explanation panel closes with Escape, focus is clearly visible, and there's a skip-to-content link.
 - Every control and dialog has a label for screen readers.
 
-**DOM audit:** `frontend/audit_dom.py` is a Playwright script with 58 checks. It covers every tab, filter, sort, export, the explanation panel, the theme switch, tab links, layout overflow at phone width, console errors and failed requests. Both the static site and the FastAPI build pass all 58.
+**DOM audit:** `frontend/audit_dom.py` is a Playwright script with 62 checks: every one of the 9 tabs at desktop and phone width (renders, no horizontal overflow, carries a simulated-data label), no console errors, the accuracy metrics (WAPE, MAE, RMSE), the data-file validator and the what-if page. The FastAPI build passes all 62; the static build passes 61 (file checks need the server).
+
+**Maths tests:** `cd backend && pytest tests` (8 tests) plus 24 live checks at `/api/verify`.
 
 ```bash
 python frontend/audit_dom.py http://localhost:8000/
@@ -233,6 +242,13 @@ python frontend/audit_dom.py http://localhost:8000/
 | POST | `/api/budget-curve` | Profit and ROI across budgets |
 | GET | `/api/forecast/{item_id}` | History, daily forecast and weekly inputs |
 | POST | `/api/explain` | Explanation for one plan row |
+| POST | `/api/scenario` | What-if: `{…optimize fields, shocks: [{kind, change, destination?, item_type?, item_id?, supplier_id?}], current_plan?}` → new plan, diff, value of re-planning |
+| GET | `/api/signals/next?seq=` | Next simulated market signal for the auto re-planning demo |
+| GET | `/api/suppliers` | Supplier scorecard and per-item comparison |
+| GET | `/api/validation` | Holdout predicted vs actual, error metrics |
+| POST | `/api/verify` | 24 maths checks on the plan for the given inputs |
+| GET | `/api/data/contract` | Tables and columns needed for real data |
+| POST | `/api/data/validate` | `{kind, csv}` → issues and warnings for one file |
 
 Interactive docs: http://localhost:8000/docs
 
@@ -249,22 +265,34 @@ The PDF ships without data, so `pipeline/generate_data.py` creates a **realistic
 
 `_ground_truth.csv` holds true demand. It is used **only** to score the unconstraining step.
 
-**To plug in real TBO data,** replace the four CSVs with the same columns:
+**To plug in real TBO data,** export the six tables in the data contract (`items`, `daily`, `calendar`, `rate_quotes`, `suppliers`, `supplier_history`). The **Data Sources** page lists every column and rule, gives empty templates and checks an uploaded file. Then:
 
-| File | Columns |
-|---|---|
-| `items.csv` | item master |
-| `daily.csv` | `date, item_id, searches, bookings, sold_out, avg_sell_price, cancellations` |
-| `rate_quotes.csv` | supplier quotes by lead time |
-| `calendar.csv` | holidays and events |
+```bash
+python -m pipeline.ingest --source /path/to/export   # validates every table; copies only if all pass
+python -m pipeline.train                              # retrains every model, re-runs both back-tests and the maths checks
+```
 
-Then re-run `python -m pipeline.train`.
+## Features added in v3
+
+| Area | What it does | Where |
+|---|---|---|
+| Supplier intelligence | Scores 6 suppliers per item from their request history: price vs benchmark, availability, confirmation rate, refund on release, minimum notice, free-release window. Each item-week is sourced from the supplier with the best expected profit after these effects. | Suppliers page, `pipeline/suppliers.py` |
+| Cancellation risk | LightGBM cancellation model; expected cancellations reduce sellable demand in every scenario before quantities are chosen. | every position's explanation |
+| Dynamic pricing | Selling price chosen per item-week from a price grid using the market price model and estimated elasticity. | Budget Optimizer, plan table |
+| What-if simulation | Change demand, supplier prices, availability, market prices, cancellations, budget and risk; see the new plan, what changed and the value of re-planning vs keeping the current plan. | What-if & Re-planning |
+| Automated re-planning | Incoming market signals (simulated in the demo) trigger a re-optimisation; the plan is switched only when the gain clears a threshold, with a log of every decision. | What-if & Re-planning |
+| Explanations | Every position shows why it was picked, the quantity logic (newsvendor ratio), supplier comparison, price, expected profit and risk. | click any plan row |
+| Unused budget | When budget is left over, the app explains why (no remaining unit adds risk-adjusted profit, destination caps, supplier capacity…). | Budget Optimizer |
+| Accuracy & validation | One accuracy definition (1 − weekly WAPE) everywhere; MAE, RMSE, WAPE, bias per model; predicted vs actual on the holdout; interval coverage. | Accuracy & Validation |
+| Maths verification | 24 independent checks recompute budget, profits, risk numbers and constraints from first principles, on the live plan; also `cd backend && pytest tests`. | Accuracy & Validation, `/api/verify` |
+| Real-data path | Data contract, file validator, ingestion CLI. | Data Sources |
 
 ## Limitations and next steps
 
+- **Live feeds:** the re-planner's signals are simulated; connect search logs, competitor rate feeds and supplier availability APIs.
 - **Forward-looking searches:** use searches *for* future travel dates as a forecast feature. This is the strongest real-world signal.
-- **Hybrid sourcing:** model pre-buy as a top-up to dynamic sourcing (incremental value) and add supplier minimum-commitment rules.
-- **Joint optimization:** optimize price and quantity together, and add competitor rate feeds and a live re-planning loop as sales come in (the feedback loop in the architecture).
+- **Forecast accuracy ceiling:** weekly accuracy is 87.5% against a noise floor of 89.8% on this data; the remaining gap is mostly irreducible randomness. Real data with forward-looking searches is the main lever for further gains.
+- **Hybrid sourcing:** model pre-buy as a top-up to dynamic sourcing and add supplier minimum-commitment rules.
 
 ## Project layout
 

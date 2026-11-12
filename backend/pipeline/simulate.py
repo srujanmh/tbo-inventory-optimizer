@@ -78,5 +78,25 @@ def build_candidate(row, z, price_grid=PRICE_GRID, n_blocks=N_BLOCKS):
         critical_ratio=best["critical_ratio"], block_size=block, levels=levels,
         block_exp=deltas.mean(axis=0), block_cvar=tail, block_cost=np.full(len(levels) - 1, block * row["unit_cost"]),
         profit_levels=pm.astype(np.float32), exp_sold_levels=sold_exp,
-        demand_mean_at_price=float(best["D"].mean()),
+        demand_mean_at_price=float(best["D"].mean()), exp_profit_qstar=float(best["exp_profit_qstar"]),
+        D=best["D"].astype(np.float32),
     )
+
+
+def choose_supplier(econ: dict, options: list, z, max_allotment: float):
+    """Evaluate every eligible supplier option on the SAME demand scenarios and keep the one with the
+    highest expected profit at its own optimal price and quantity.
+    econ: median, sigma, market_price, cancel_rate, elasticity.
+    options: dicts with supplier_id, eligible, and (if eligible) _unit_cost, _salvage, _cap.
+    Returns (candidate or None, chosen option or None, row used). Writes exp_profit / viable onto options."""
+    best, chosen, best_row = None, None, None
+    for o in options:
+        if not o.get("eligible"):
+            continue
+        row = dict(econ, unit_cost=o["_unit_cost"], salvage_rate=o["_salvage"], max_allotment=min(max_allotment, o["_cap"]))
+        cc = build_candidate(row, z)
+        o["exp_profit"] = round(cc["exp_profit_qstar"], 0) if cc else 0.0
+        o["viable"] = cc is not None
+        if cc is not None and (best is None or cc["exp_profit_qstar"] > best["exp_profit_qstar"]):
+            best, chosen, best_row = cc, o, row
+    return best, chosen, best_row

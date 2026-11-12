@@ -3,7 +3,10 @@ calibrated intervals), cancellation model, price elasticity, supplier-rate (buy 
 SHAP drivers and holdout scoring for every model."""
 import numpy as np
 import pandas as pd
-import lightgbm as lgb
+try:  # only needed to train; the API (which only scores metrics) runs without it
+    import lightgbm as lgb
+except ImportError:  # pragma: no cover
+    lgb = None
 
 from .config import DATA_DIR, HORIZON_END, SEARCH_LAG_MIN, SEARCH_LAG_MAX, SEED
 
@@ -45,8 +48,25 @@ def load_data():
 
 
 def wape(y, p):
+    """Weighted absolute percentage error = sum|forecast - actual| / sum(actual).
+    "Forecast accuracy" everywhere in the product is defined as 1 - weekly WAPE."""
     y, p = np.asarray(y, float), np.asarray(p, float)
     return float(np.abs(p - y).sum() / y.sum())
+
+
+def mae(y, p):
+    return float(np.mean(np.abs(np.asarray(p, float) - np.asarray(y, float))))
+
+
+def rmse(y, p):
+    return float(np.sqrt(np.mean((np.asarray(p, float) - np.asarray(y, float)) ** 2)))
+
+
+def error_metrics(y, p):
+    """The standard set reported for every forecast: WAPE, MAE, RMSE (units), bias."""
+    y, p = np.asarray(y, float), np.asarray(p, float)
+    return dict(wape=round(wape(y, p), 4), mae=round(mae(y, p), 2), rmse=round(rmse(y, p), 2),
+                bias=round(float(p.sum() / y.sum() - 1), 4), accuracy=round(1 - wape(y, p), 4), n=int(len(y)))
 
 
 def week_start(s):
@@ -260,6 +280,18 @@ def backtest(feat: pd.DataFrame, hist_end: pd.Timestamp, truth: pd.DataFrame, ho
         bias=round(float(wk["median"].sum() / wk.y.sum() - 1), 4),
         interval_scale_daily=round(fa.s_daily, 3), interval_scale_weekly=round(fa.k_weekly, 3),
     )
+    # full error table (WAPE / MAE / RMSE / bias) for model and baseline, weekly and daily
+    types = feat[["item_id", "item_type"]].drop_duplicates()
+    wk = wk.merge(types, on="item_id", how="left")
+    metrics["table"] = dict(
+        weekly_model=error_metrics(wk.y, wk["median"]), weekly_naive=error_metrics(wk.y, wk.naive),
+        daily_model=error_metrics(y, te.p50), daily_naive=error_metrics(y, te.naive),
+        weekly_vs_true_demand=error_metrics(wk.true, wk["median"]),
+        weekly_ceiling=error_metrics(wk.true, wk.exp),
+        by_type={t: error_metrics(g.y, g["median"]) for t, g in wk.groupby("item_type")},
+    )
+    metrics["validation"] = wk[["item_id", "item_type", "week", "y", "median", "p10", "p90", "naive", "true"]].assign(
+        week=lambda x: x.week.dt.strftime("%Y-%m-%d")).round(2).to_dict("records")
     # final calibration factors for production: recalibrate on the latest holdout
     fb_holdout = fb
     prod_calib = DemandForecaster()

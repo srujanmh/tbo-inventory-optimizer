@@ -92,3 +92,11 @@ export const tip = () => ({
   labelStyle: { color: COLORS.muted }, itemStyle: { color: COLORS.text }, cursor: { fill: 'rgba(128,128,128,0.08)' },
 })
 export const axis = () => ({ tick: { fontSize: 11, fill: COLORS.muted }, stroke: COLORS.grid })
+
+/** Small amber tag marking figures that come from simulated (synthetic) data */
+export const Sim = ({ title = 'Computed on the synthetic demo dataset, not actual TBO results' }) => <span className="sim-tag" title={title}>simulated</span>
+
+/** Collapsible definitions / explanations */
+export const Defs = ({ items }) => (
+  <div className="defs">{items.map(([k, v, d]) => <div className="def" key={k}><div className="k">{k}</div><b>{v}</b><p>{d}</p></div>)}</div>
+)

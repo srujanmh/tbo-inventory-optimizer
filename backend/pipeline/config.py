@@ -1,18 +1,19 @@
 """Global configuration for the TBO inventory optimization pipeline."""
+import os
 from pathlib import Path
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "data"
+DATA_DIR = Path(os.environ.get("TBO_DATA_DIR", ROOT / "data"))
 ART_DIR = ROOT / "artifacts"
 
 SEED = 42
 
 # Planning clock: "today" is the day the planner runs the system.
-TODAY = pd.Timestamp("2026-11-10")
+TODAY = pd.Timestamp(os.environ.get("TBO_TODAY", "2026-11-10"))   # set to the day after your data ends
 HIST_START = pd.Timestamp("2024-01-01")
 HIST_END = TODAY - pd.Timedelta(days=1)          # last day with observed data
-HORIZON_START = pd.Timestamp("2026-11-16")       # next Monday
+HORIZON_START = TODAY + pd.Timedelta(days=(7 - TODAY.dayofweek) % 7 or 7)   # next Monday
 HORIZON_WEEKS = 13                                # ~ one quarter of travel weeks
 HORIZON_END = HORIZON_START + pd.Timedelta(weeks=HORIZON_WEEKS) - pd.Timedelta(days=1)
 

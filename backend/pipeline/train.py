@@ -12,6 +12,7 @@ from .config import (ART_DIR, DATA_DIR, TODAY, HIST_END, HORIZON_START, HORIZON_
 from . import models as M
 from .candidates import build_candidates, season_proxy_from
 from .plan_backtest import run_plan_backtest
+from .suppliers import load_supplier_data, supplier_scorecard, score_scorecard
 
 
 def log(msg, t0=[time.time()]):
@@ -25,7 +26,11 @@ def run():
 
     # ---------------- 1. Unconstrain demand ----------------
     d = M.unconstrain(daily)
-    truth = pd.read_csv(DATA_DIR / "_ground_truth.csv", parse_dates=["date"])
+    synthetic = (DATA_DIR / "_ground_truth.csv").exists()
+    if synthetic:   # synthetic data: the generator's true demand lets us score the unconstraining step
+        truth = pd.read_csv(DATA_DIR / "_ground_truth.csv", parse_dates=["date"])
+    else:           # real data: true demand is unobservable; score against the unconstrained estimate
+        truth = d[["date", "item_id"]].assign(true_demand=d.demand_est, expected_demand=d.demand_est)
     chk = d.merge(truth, on=["date", "item_id"])
     so = chk[chk.sold_out == 1]
     unconstrain_metrics = dict(
@@ -40,7 +45,7 @@ def run():
     # ---------------- 2. Features + forecast ----------------
     feat = M.build_features(d, items, cal, d)
     metrics, calib, fc_holdout = M.backtest(feat, HIST_END, truth)
-    log(f"forecast backtest: {metrics}")
+    log(f"forecast backtest: { {k: v for k, v in metrics.items() if k != 'validation'} }")
     fc = M.DemandForecaster().fit(feat)
     fc.s_daily, fc.k_weekly = calib["s_daily"], calib["k_weekly"]
     log("fitted daily + weekly forecasters on full history")
@@ -53,8 +58,8 @@ def run():
 
     # ---------------- 4. Elasticity & price index ----------------
     el, price_idx = M.estimate_elasticity(feat, items)
-    el_chk = el.merge(items[["item_id", "elasticity"]])
-    elasticity_metrics = dict(mae=round(float(np.abs(el_chk.elasticity_est - el_chk.elasticity).mean()), 3),
+    el_chk = el.merge(items[["item_id", "elasticity"]]) if "elasticity" in items else None
+    elasticity_metrics = None if el_chk is None else dict(mae=round(float(np.abs(el_chk.elasticity_est - el_chk.elasticity).mean()), 3),
                               bias=round(float((el_chk.elasticity_est - el_chk.elasticity).mean()), 3),
                               corr=round(float(np.corrcoef(el_chk.elasticity_est, el_chk.elasticity)[0, 1]), 3),
                               mae_previous_method=0.308)
@@ -72,14 +77,22 @@ def run():
     log(f"price model: {price_metrics}")
     pmodel = M.fit_price_model(feat)
 
+    # ---------------- 5c. Supplier intelligence ----------------
+    sup, sup_hist = load_supplier_data()
+    sup_truth = pd.read_csv(DATA_DIR / "_supplier_truth.csv") if (DATA_DIR / "_supplier_truth.csv").exists() else None
+    scorecard = supplier_scorecard(sup, sup_hist, TODAY)
+    supplier_metrics = score_scorecard(supplier_scorecard(sup, sup_hist, cut), sup_truth) if sup_truth is not None else None
+    log(f"supplier scorecard: {len(scorecard)} item-supplier pairs, estimate errors {supplier_metrics}")
+
     # ---------------- 6. Build candidates (item x week) for the live plan ----------------
     cands, blocks, hz = build_candidates(items, cal, d, feat, fc, cmodel, rmodel, el, price_idx, season_proxy,
-                                         TODAY, HORIZON_START, HORIZON_WEEKS, pmodel=pmodel)
+                                         TODAY, HORIZON_START, HORIZON_WEEKS, pmodel=pmodel, scorecard=scorecard)
     log(f"built {len(cands)} candidates ({int(cands.viable.sum())} viable)")
 
     # ---------------- 6b. Back-dated plan test ----------------
     plan_bt = run_plan_backtest(items, cal, d, feat, quotes, truth, daily, fc_holdout,
-                                as_of=cut + pd.Timedelta(days=1), n_weeks=12, log=log)
+                                as_of=cut + pd.Timedelta(days=1), n_weeks=12, sup=sup, sup_hist=sup_hist,
+                                sup_truth=sup_truth, log=log)
 
     # ---------------- 7. Persist ----------------
     feat["item_id_s"] = feat.item_id.astype(str)
@@ -90,8 +103,10 @@ def run():
 
     with open(ART_DIR / "candidates.pkl", "wb") as f:
         pickle.dump(dict(cands=cands, blocks=blocks), f)
+    validation = metrics.pop("validation")
     with open(ART_DIR / "series.pkl", "wb") as f:
-        pickle.dump(dict(history=hist_out, forecast=fc_out), f)
+        pickle.dump(dict(history=hist_out, forecast=fc_out, validation=validation), f)
+    scorecard.to_csv(ART_DIR / "supplier_scorecard.csv", index=False)
     items.merge(el, on="item_id", how="left").to_csv(ART_DIR / "items_enriched.csv", index=False)
     summary = dict(
         generated_at=str(pd.Timestamp.now().round("s")), today=str(TODAY.date()),
@@ -100,8 +115,9 @@ def run():
         n_items=int(len(items)), n_candidates=int(len(cands)), n_viable=int(cands.viable.sum()),
         forecast_backtest=metrics, unconstraining=unconstrain_metrics,
         cancellation_model=cancel_metrics, supplier_rate_model=rate_metrics, price_model=price_metrics,
-        elasticity=elasticity_metrics, elasticity_mae=elasticity_metrics["mae"], driver_importance=importance,
-        total_capacity_cost=float(sum(b["block_cost"].sum() for b in blocks)),
+        supplier_scorecard_model=supplier_metrics, data_source="synthetic" if synthetic else "real",
+        elasticity=elasticity_metrics, elasticity_mae=elasticity_metrics["mae"] if elasticity_metrics else None, driver_importance=importance,
+        total_capacity_cost=float(sum(b["block_cost"].sum() for b in blocks if b.get("viable"))),
         plan_backtest=plan_bt,
     )
     with open(ART_DIR / "summary.json", "w") as f:

@@ -8,14 +8,15 @@ import pandas as pd
 
 from .config import LEAD_OPTIONS, N_SCENARIOS, SEED
 from . import models as M
-from .simulate import common_shocks, build_candidate
+from .simulate import common_shocks, build_candidate, choose_supplier
+from .suppliers import effective_terms
 
 W_G, W_D = 0.30, 0.40                      # weight of global / destination shocks in demand scenarios
 W_E = np.sqrt(1 - W_G ** 2 - W_D ** 2)
 
 
 def build_candidates(items, cal, d_hist, feat_hist, fc, cmodel, rmodel, el, price_idx, season_proxy,
-                     as_of, horizon_start, n_weeks, pmodel=None, seed=SEED):
+                     as_of, horizon_start, n_weeks, pmodel=None, scorecard=None, seed=SEED):
     """d_hist / feat_hist must only contain data before `as_of`."""
     as_of = pd.Timestamp(as_of)
     horizon_start = pd.Timestamp(horizon_start)
@@ -69,13 +70,17 @@ def build_candidates(items, cal, d_hist, feat_hist, fc, cmodel, rmodel, el, pric
         for col in M.CAT_COLS:
             rx[col] = pd.Categorical(rx[col].astype(str), categories=sorted(items[col].astype(str).unique()))
         mults = rmodel.predict(rx[M.RATE_FEATURES])
-        best_mult = float(mults.min())
-        ok = [l for l, m in zip(leads, mults) if m <= best_mult * 1.015]
-        buy_by_lead = int(min(ok))                       # latest acceptable purchase date
-        buy_by = max(pd.Timestamp(week) - pd.Timedelta(days=buy_by_lead), as_of)
-        unit_cost = best_mult * float(it.ref_price)
         cost_if_wait = float(mults[-1]) * float(it.ref_price)
 
+        def timing(min_lead):
+            """Cheapest predicted rate among lead times the supplier accepts; buy at the latest
+            lead time within 1.5% of that rate (keeps flexibility without paying more)."""
+            ok_idx = [j for j, l in enumerate(leads) if l >= min_lead]
+            if not ok_idx:
+                return None
+            best_mult = float(min(mults[j] for j in ok_idx))
+            lead = int(min(leads[j] for j in ok_idx if mults[j] <= best_mult * 1.015))
+            return best_mult, lead
         # --- historical sold-out risk in the same season window (ISO week +-1, prior years)
         wk_no = min(pd.Timestamp(week).isocalendar()[1], 52)
         hist = fh[(fh.item_id_s == item_id) & (fh.iso_week.between(wk_no - 1, wk_no + 1))]
@@ -85,12 +90,46 @@ def build_candidates(items, cal, d_hist, feat_hist, fc, cmodel, rmodel, el, pric
                 & (fh.date < pd.Timestamp(week) - pd.Timedelta(days=357))]
         ly_rev = float((ly.bookings * ly.avg_sell_price).sum())
 
-        row = dict(median=median, sigma=sigma, market_price=market_price, unit_cost=unit_cost,
-                   salvage_rate=float(it.salvage_rate), cancel_rate=float(g.cancel_rate.mean()),
-                   elasticity=float(el_map.get(item_id, 1.2)),
-                   max_allotment=float(max(1.6 * avg_week_dem.get(item_id, median), 5)))
+        max_allot = float(max(1.6 * avg_week_dem.get(item_id, median), 5))
+        econ = dict(median=median, sigma=sigma, market_price=market_price,
+                    cancel_rate=float(g.cancel_rate.mean()), elasticity=float(el_map.get(item_id, 1.2)))
         z = W_G * g_shock + W_D * d_shock[it.destination] + W_E * rng.standard_normal(N_SCENARIOS)
-        c = build_candidate(row, z)
+
+        # --- supplier choice: evaluate every supplier on the same demand scenarios, keep the best
+        if scorecard is not None:
+            sups = scorecard[scorecard.item_id == item_id].to_dict("records")
+        else:   # single implicit supplier (the benchmark rate)
+            sups = [dict(supplier_id="S-BENCH", supplier="Benchmark rate", price_index=1.0, availability=1.0,
+                         reliability=1.0, refund_rate=float(it.salvage_rate), min_lead_days=0, free_release_days=0)]
+        options = []
+        for sp in sups:
+            tm = timing(int(sp["min_lead_days"]))
+            opt = dict(supplier_id=sp["supplier_id"], supplier=sp["supplier"], reliability=round(float(sp["reliability"]), 3),
+                       refund_rate=round(float(sp["refund_rate"]), 3), availability=round(float(sp["availability"]), 3),
+                       min_lead_days=int(sp["min_lead_days"]), price_index=round(float(sp["price_index"]), 4))
+            if tm is None:
+                opt.update(eligible=False, reason=f"needs {int(sp['min_lead_days'])} days notice; only {days_until} left")
+            else:
+                mult, lead = tm
+                t = effective_terms(mult * float(it.ref_price), cost_if_wait, sp, max_allot)
+                opt.update(eligible=True, supplier_cost=round(t["supplier_cost"], 0), effective_cost=round(t["unit_cost"], 0),
+                           cap_units=round(t["cap"], 0), buy_lead_days=lead,
+                           _unit_cost=t["unit_cost"], _salvage=t["salvage_rate"], _cap=t["cap"])
+            options.append(opt)
+        c, chosen, row = choose_supplier(econ, options, z, max_allot)
+        if chosen is None:          # nothing profitable: describe the cheapest eligible option
+            el_opts = [o for o in options if o.get("eligible")]
+            chosen = min(el_opts, key=lambda o: o["_unit_cost"]) if el_opts else dict(
+                _unit_cost=float(mults.min()) * float(it.ref_price), _salvage=float(it.salvage_rate), _cap=max_allot,
+                buy_lead_days=int(min(leads)), supplier=None, supplier_id=None, reliability=None, supplier_cost=None)
+            row = dict(econ, unit_cost=chosen["_unit_cost"], salvage_rate=chosen["_salvage"],
+                       max_allotment=min(max_allot, chosen["_cap"]))
+        unit_cost = float(chosen["_unit_cost"])
+        buy_by_lead = int(chosen["buy_lead_days"])
+        buy_by = max(pd.Timestamp(week) - pd.Timedelta(days=buy_by_lead), as_of)
+        sim = dict(cand_id=f"{item_id}|{pd.Timestamp(week).date()}", z=z.astype(np.float32), econ=econ,
+                   max_allot=max_allot, options=options, days_until=days_until, cost_if_wait=cost_if_wait)
+        public_options = [{k: v for k, v in o.items() if not k.startswith("_")} for o in options]
 
         drv = g[[col for col in g.columns if col.startswith("drv_")]].mean()   # avg log-contribution over the week
         drv = drv.drop(["drv_Property / route baseline"]).sort_values(key=np.abs, ascending=False)
@@ -104,7 +143,9 @@ def build_candidates(items, cal, d_hist, feat_hist, fc, cmodel, rmodel, el, pric
             demand_p50=round(median, 1), demand_p10=round(float(wrow.p10), 1), demand_p90=round(float(wrow.p90), 1),
             demand_sd=round(float(median * np.sqrt(np.exp(sigma ** 2) - 1) * np.exp(sigma ** 2 / 2)), 1),
             market_price=round(market_price, 0), unit_cost=round(unit_cost, 0), cost_if_wait=round(cost_if_wait, 0),
-            buy_by=str(buy_by.date()), buy_lead_days=buy_by_lead, salvage_rate=row["salvage_rate"],
+            buy_by=str(buy_by.date()), buy_lead_days=buy_by_lead, salvage_rate=round(row["salvage_rate"], 4),
+            supplier=chosen.get("supplier"), supplier_id=chosen.get("supplier_id"), supplier_cost=chosen.get("supplier_cost"),
+            supplier_reliability=chosen.get("reliability"), suppliers=public_options,
             cancel_rate=round(row["cancel_rate"], 4), elasticity=round(row["elasticity"], 2),
             max_allotment=round(row["max_allotment"], 0), sold_out_risk=round(sold_out_risk, 3),
             hist_lost_demand=round(hist_lost, 1), last_year_revenue=round(ly_rev, 0),
@@ -113,17 +154,18 @@ def build_candidates(items, cal, d_hist, feat_hist, fc, cmodel, rmodel, el, pric
         if c is None:
             base.update(viable=False)
             meta.append(base)
+            blocks.append(dict(sim, viable=False))
             continue
         base.update(viable=True, sell_price=round(c["sell_price"], 0), price_mult=c["price_mult"],
                     q_star=round(c["q_star"], 1), critical_ratio=round(c["critical_ratio"], 3),
                     block_size=c["block_size"])
         meta.append(base)
-        blocks.append(dict(cand_id=base["cand_id"], **{k: c[k] for k in
-                      ["levels", "block_exp", "block_cvar", "block_cost", "profit_levels", "exp_sold_levels"]}))
+        blocks.append(dict(sim, viable=True, **{k: c[k] for k in
+                      ["levels", "block_exp", "block_cvar", "block_cost", "profit_levels", "exp_sold_levels", "D"]}))
 
     cands = pd.DataFrame(meta)
     v = cands[cands.viable]
-    bmap = {b["cand_id"]: b for b in blocks}
+    bmap = {b["cand_id"]: b for b in blocks if b.get("viable")}
     roi = []
     for r in v.itertuples():
         b = bmap[r.cand_id]

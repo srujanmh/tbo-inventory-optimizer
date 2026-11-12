@@ -30,7 +30,7 @@ def _solver(time_limit):
 class Optimizer:
     def __init__(self, cands: pd.DataFrame, blocks: list):
         self.cands = cands[cands.viable].reset_index(drop=True)
-        bmap = {b["cand_id"]: b for b in blocks}
+        bmap = {b["cand_id"]: b for b in blocks if b.get("viable", True)}
         self.blocks = [bmap[c] for c in self.cands.cand_id]
         self.n_scen = self.blocks[0]["profit_levels"].shape[0]
         # stress scenarios T: worst 10% for a reference portfolio (every candidate at ~Q*)
@@ -95,12 +95,17 @@ class Optimizer:
                 expected_sold=round(float(b["exp_sold_levels"][k]), 1), sell_through=round(float(b["exp_sold_levels"][k]) / q, 3),
                 sold_out_risk=c.sold_out_risk, cancel_rate=c.cancel_rate, opportunity_score=c.opportunity_score,
                 events=c.events, drivers=c.drivers,
+                supplier=c.get("supplier"), supplier_id=c.get("supplier_id"), supplier_cost=c.get("supplier_cost"),
+                supplier_reliability=c.get("supplier_reliability"), suppliers=c.get("suppliers"),
+                price_mult=c.price_mult, critical_ratio=c.critical_ratio, q_star=c.q_star, salvage_rate=c.salvage_rate,
+                elasticity=c.elasticity, buy_lead_days=c.buy_lead_days,
             ))
         return sorted(rows, key=lambda r: -r["expected_profit"])
 
     # ------------------------------------------------------------------ MILP
     def solve(self, budget, lam=0.3, max_dest_share=0.30, item_types=("Hotel", "Flight"),
-              destinations=None, time_limit=20):
+              destinations=None, time_limit=20, relax=False):
+        """relax=True solves the LP relaxation (0 <= x <= 1), an upper bound used to verify optimality."""
         mask = self._mask(item_types, destinations)
         prob = pulp.LpProblem("tbo_prebuy", pulp.LpMaximize)
         x, obj, cost_terms, dest_terms = {}, [], [], {}
@@ -113,7 +118,8 @@ class Optimizer:
             last = pos.max()
             d = self.cands.destination.iat[i]
             for k in range(last + 1):
-                v = pulp.LpVariable(f"x_{i}_{k}", cat="Binary")
+                v = (pulp.LpVariable(f"x_{i}_{k}", lowBound=0, upBound=1, cat="Continuous") if relax
+                     else pulp.LpVariable(f"x_{i}_{k}", cat="Binary"))
                 x[(i, k)] = v
                 obj.append(float(score[k]) * v)
                 ct = float(b["block_cost"][k]) * v
@@ -121,23 +127,98 @@ class Optimizer:
                 dest_terms.setdefault(d, []).append(ct)
                 if k > 0:
                     prob += v <= x[(i, k - 1)]
-        if not x:
-            return self._result(np.zeros(len(self.cands), int), budget, lam, "no_candidates")
-        prob += pulp.lpSum(obj)
-        prob += pulp.lpSum(cost_terms) <= budget
         n_dest = len(dest_terms)
         share = max(max_dest_share, 1.0 / max(n_dest, 1))   # keep feasible when few destinations selected
+        if not x:
+            return self._result(np.zeros(len(self.cands), int), budget, lam, "no_candidates", mask, share)
+        prob += pulp.lpSum(obj)
+        prob += pulp.lpSum(cost_terms) <= budget
         for d, terms in dest_terms.items():
             prob += pulp.lpSum(terms) <= share * budget
         prob.solve(_solver(time_limit))
         status = pulp.LpStatus[prob.status]
+        if relax:
+            return dict(status=status, objective=float(pulp.value(prob.objective) or 0.0))
         k_sel = np.zeros(len(self.cands), int)
         for (i, k), v in x.items():
             if v.value() is not None and v.value() > 0.5:
                 k_sel[i] = max(k_sel[i], k + 1)
-        return self._result(k_sel, budget, lam, status)
+        return self._result(k_sel, budget, lam, status, mask, share)
 
-    def _result(self, k_sel, budget, lam, status):
+    def risk_scores(self, lam):
+        """Risk-adjusted marginal value of every block: (1-lam) * E[dProfit] + lam * stress-scenario dProfit."""
+        return [(1 - lam) * b["block_exp"] + lam * t for b, t in zip(self.blocks, self.block_tail)]
+
+    def unused_budget(self, k_sel, budget, lam, mask, share):
+        """Explain why part of the budget is not invested.
+
+        Looks at every block the plan did NOT buy that still has a positive risk-adjusted value
+        and classifies why it was left out:
+          dest_cap   - its destination already holds the maximum share of the budget
+          too_big    - the next block costs more than the money left
+          filtered   - excluded by the inventory-type / destination filters
+        Blocks with value <= 0 are not worth buying at all (expected profit after cancellations,
+        unsold-stock losses and the risk penalty is not positive)."""
+        scores = self.risk_scores(lam)
+        invested = float(sum(self.blocks[i]["block_cost"][:k].sum() for i, k in enumerate(k_sel) if k > 0))
+        left = budget - invested
+        cap = share * budget
+        dest_inv = {}
+        for i, k in enumerate(k_sel):
+            if k > 0:
+                d = self.cands.destination.iat[i]
+                dest_inv[d] = dest_inv.get(d, 0.0) + float(self.blocks[i]["block_cost"][:k].sum())
+        buckets = {r: dict(cost=0.0, value=0.0, positions=set()) for r in ("dest_cap", "too_big", "filtered", "other")}
+        exhausted = 0
+        for i, b in enumerate(self.blocks):
+            sc, k0 = scores[i], int(k_sel[i])
+            pos = np.where(sc > 0)[0]
+            n_good = int(pos.max()) + 1 if len(pos) else 0
+            if k0 >= n_good:
+                exhausted += int(mask[i])
+                continue
+            rest_cost = float(b["block_cost"][k0:n_good].sum())
+            rest_val = float(np.clip(sc[k0:n_good], 0, None).sum())
+            d = self.cands.destination.iat[i]
+            if not mask[i]:
+                r = "filtered"
+            elif dest_inv.get(d, 0.0) + float(b["block_cost"][k0]) > cap + 1e-6:
+                r = "dest_cap"
+            elif float(b["block_cost"][k0]) > left + 1e-6:
+                r = "too_big"
+            else:
+                r = "other"
+            buckets[r]["cost"] += rest_cost
+            buckets[r]["value"] += rest_val
+            buckets[r]["positions"].add(i)
+        capped = sorted(d for d, v in dest_inv.items() if v >= cap * 0.995)
+        labels = dict(
+            dest_cap=f"Destination limit: {', '.join(capped) if capped else 'some destinations'} already hold the maximum "
+                     f"{share:.0%} of the budget, so more profitable stock there is not bought (diversification rule)",
+            too_big="Leftover is smaller than the next quantity block of any remaining profitable position",
+            filtered="Profitable options exist but are excluded by the inventory-type or destination filters",
+            other="Solver tolerance (the MILP stops within 0.2% of the optimum)",
+        )
+        reasons = [dict(code=r, label=labels[r], blocked_cost=round(v["cost"], 0), blocked_value=round(v["value"], 0),
+                        positions=len(v["positions"])) for r, v in buckets.items() if v["positions"]]
+        reasons.sort(key=lambda r: -r["blocked_cost"])
+        if left <= 0.01 * budget:
+            summary = "The budget is fully used."
+        elif not any(r["code"] in ("dest_cap", "too_big", "other") for r in reasons):
+            filt = next((r for r in reasons if r["code"] == "filtered"), None)
+            summary = (("Every option inside your filters is already bought up to its profitable limit. "
+                        f"Another ₹{filt['blocked_cost'] / 1e7:.1f} Cr of profitable inventory exists outside the selected "
+                        "inventory types or destinations; widen the filters to use the rest of the budget.") if filt else ("Every available position is already bought up to the point where one more unit stops paying: "
+                       "past that point the expected profit after cancellations, unsold-stock losses and the risk "
+                       "penalty is zero or negative, so investing the rest would lower profit. Keeping it uninvested "
+                       "is the optimal decision."))
+        else:
+            summary = reasons[0]["label"] + "."
+        return dict(unused=round(left, 0), unused_share=round(left / budget, 4) if budget else 0,
+                    summary=summary, reasons=reasons, capped_destinations=capped, destination_cap=round(cap, 0),
+                    positions_at_profitable_limit=exhausted)
+
+    def _result(self, k_sel, budget, lam, status, mask=None, share=None):
         stats = self.evaluate(k_sel)
         plan = self._plan_rows(k_sel)
         by_dest = (pd.DataFrame(plan).groupby("destination").agg(investment=("investment", "sum"),
@@ -152,7 +233,10 @@ class Optimizer:
                      risk_aversion=lam, status=status, n_positions=len(plan),
                      saving_vs_wait=round(sum(r["saving_vs_wait"] for r in plan), 0),
                      units_in_soldout_windows=int(sum(r["expected_sold"] for r in plan if r["sold_out_risk"] >= 0.5)))
-        return dict(stats=stats, plan=plan, by_destination=by_dest, by_type=by_type, by_week=by_week, k_sel=k_sel)
+        out = dict(stats=stats, plan=plan, by_destination=by_dest, by_type=by_type, by_week=by_week, k_sel=k_sel)
+        if mask is not None:
+            out["unused_budget"] = self.unused_budget(k_sel, budget, lam, mask, share)
+        return out
 
     # ------------------------------------------------------------------ baselines
     def greedy(self, budget, item_types=("Hotel", "Flight"), destinations=None):

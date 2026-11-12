@@ -1,8 +1,8 @@
 import React from 'react'
-import { inr, pct, num } from './api'
+import { inr, pct, num, STATIC } from './api'
 import { motion } from 'motion/react'
-import { Card, CountUp, fadeUp, stagger } from './ui'
-import { Scorecard } from './Overview'
+import { Card, CountUp, fadeUp, stagger, Sim } from './ui'
+import { Scorecard } from './Accuracy'
 import Backtest from './Backtest'
 
 const STEPS = [
@@ -32,10 +32,10 @@ export default function Home({ summary, go }) {
           </motion.div>
         </motion.div>
         <motion.div className="hero-stats" variants={stagger(0.09, 0.35)} initial="hidden" animate="show">
-          <motion.div variants={fadeUp} whileHover={{ y: -4 }}><b><CountUp value={1 - bt.weekly_wape} format={(v) => pct(v)} duration={1.4} /></b><span>weekly forecast accuracy<br /><small>vs {pct(1 - bt.weekly_wape_naive)} naive</small></span></motion.div>
-          <motion.div variants={fadeUp} whileHover={{ y: -4 }}><b><CountUp value={un.hidden_demand_recovered} format={num} duration={1.6} /></b><span>hidden demand recovered<br /><small>on sold-out days</small></span></motion.div>
+          <motion.div variants={fadeUp} whileHover={{ y: -4 }}><b><CountUp value={1 - bt.weekly_wape} format={(v) => pct(v)} duration={1.4} /></b><span>weekly forecast accuracy<Sim /><br /><small>1 − WAPE on unseen weeks · naive {pct(1 - bt.weekly_wape_naive)}</small></span></motion.div>
+          <motion.div variants={fadeUp} whileHover={{ y: -4 }}><b><CountUp value={un.hidden_demand_recovered} format={num} duration={1.6} /></b><span>hidden demand recovered<Sim /><br /><small>units, on sold-out days</small></span></motion.div>
           <motion.div variants={fadeUp} whileHover={{ y: -4 }}><b>{summary.n_items} × {summary.horizon.weeks}</b><span>items × travel weeks<br /><small>{summary.n_viable} profitable options</small></span></motion.div>
-          <motion.div variants={fadeUp} whileHover={{ y: -4 }}><b>&lt; 1 s</b><span>to re-plan any budget<br /><small>runs in your browser</small></span></motion.div>
+          <motion.div variants={fadeUp} whileHover={{ y: -4 }}><b>{STATIC ? '< 1 s' : 'seconds'}</b><span>to re-plan any budget<br /><small>{STATIC ? 'runs in your browser' : 'exact MILP solve on the server'}</small></span></motion.div>
         </motion.div>
       </section>
 
@@ -62,10 +62,10 @@ export default function Home({ summary, go }) {
       <Scorecard summary={summary} />
 
       <p className="muted small-note">
-        Data note: the challenge did not include a dataset, so the platform runs on a realistic synthetic dataset
+        Data note: the challenge did not include a dataset, so every figure on this site is <b>simulated</b>: the platform runs on a realistic synthetic dataset
         ({summary.history.start} → {summary.history.end}, {summary.n_items} hotels & routes across {summary.destinations.length} destinations)
         with seasonality, Indian holidays, destination events, promotions, supply shortages, cancellations and lead-time-dependent supplier rates.
-        Swap in real TBO data with the same columns and retrain.
+        These are not actual TBO revenues or savings. Swap in real TBO data with the same columns (see Data Sources) and retrain.
       </p>
     </div>
   )

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12 03:55:01",
+  "generated_at": "2026-11-12 09:37:06",
   "today": "2026-11-10",
   "history": {
     "start": "2024-01-01",
@@ -13,7 +13,7 @@
   },
   "n_items": 45,
   "n_candidates": 585,
-  "n_viable": 577,
+  "n_viable": 532,
   "forecast_backtest": {
     "holdout_start": "2026-08-11",
     "holdout_end": "2026-11-09",
@@ -28,7 +28,75 @@
     "weekly_coverage_p10_p90": 0.7981,
     "bias": -0.0121,
     "interval_scale_daily": 1.2,
-    "interval_scale_weekly": 1.526
+    "interval_scale_weekly": 1.526,
+    "table": {
+      "weekly_model": {
+        "wape": 0.1253,
+        "mae": 34.27,
+        "rmse": 56.6,
+        "bias": -0.0121,
+        "accuracy": 0.8747,
+        "n": 540
+      },
+      "weekly_naive": {
+        "wape": 0.1869,
+        "mae": 51.1,
+        "rmse": 88.0,
+        "bias": -0.0934,
+        "accuracy": 0.8131,
+        "n": 540
+      },
+      "daily_model": {
+        "wape": 0.2865,
+        "mae": 11.24,
+        "rmse": 18.77,
+        "bias": -0.0183,
+        "accuracy": 0.7135,
+        "n": 4095
+      },
+      "daily_naive": {
+        "wape": 0.4022,
+        "mae": 15.78,
+        "rmse": 26.68,
+        "bias": -0.0986,
+        "accuracy": 0.5978,
+        "n": 4095
+      },
+      "weekly_vs_true_demand": {
+        "wape": 0.1255,
+        "mae": 34.34,
+        "rmse": 55.44,
+        "bias": -0.013,
+        "accuracy": 0.8745,
+        "n": 540
+      },
+      "weekly_ceiling": {
+        "wape": 0.1023,
+        "mae": 27.99,
+        "rmse": 44.9,
+        "bias": -0.005,
+        "accuracy": 0.8977,
+        "n": 540
+      },
+      "by_type": {
+        "Flight": {
+          "wape": 0.1154,
+          "mae": 57.9,
+          "rmse": 86.51,
+          "bias": 0.0017,
+          "accuracy": 0.8846,
+          "n": 180
+        },
+        "Hotel": {
+          "wape": 0.141,
+          "mae": 22.45,
+          "rmse": 32.61,
+          "bias": -0.0339,
+          "accuracy": 0.859,
+          "n": 360
+        }
+      }
+    }
   },
   "unconstraining": {
     "sold_out_day_share": 0.2664,
@@ -52,6 +120,13 @@
     "peak_day_mape": 0.0576,
     "peak_day_mape_monthly_avg": 0.0808
   },
+  "supplier_scorecard_model": {
+    "price_index_mae": 0.0032,
+    "availability_mae": 0.0176,
+    "reliability_mae": 0.0035,
+    "refund_rate_mae": 0.0033
+  },
+  "data_source": "synthetic",
   "elasticity": {
     "mae": 0.154,
     "bias": 0.012,
@@ -70,7 +145,7 @@
     "Growth trend": 0.016,
     "Destination events": 0.0143
   },
-  "total_capacity_cost": 1790088798.1551104,
+  "total_capacity_cost": 1585635570.5322423,
   "plan_backtest": {
     "as_of": "2026-08-11",
     "horizon_start": "2026-08-17",
@@ -79,130 +154,204 @@
     "budget": 750000000.0,
     "risk_aversion": 0.3,
     "ai": {
-      "positions": 540,
-      "invested": 651704772.0,
-      "predicted_profit": 123185983.0,
-      "realised_profit": 119720465.0,
-      "realised_roi": 0.1837,
-      "units": 61809,
-      "units_sold": 60776,
-      "sell_through": 0.9833,
-      "loss_making_positions": 4,
-      "prediction_gap": -0.0281
+      "positions": 495,
+      "invested": 641007211.0,
+      "predicted_profit": 120448850.0,
+      "realised_profit": 117368221.0,
+      "realised_roi": 0.1831,
+      "units": 61888,
+      "units_sold": 60881,
+      "sell_through": 0.9837,
+      "loss_making_positions": 3,
+      "prediction_gap": -0.0256
     },
     "greedy": {
-      "positions": 540,
-      "invested": 679077578.0,
-      "predicted_profit": 123717652.0,
-      "realised_profit": 119566712.0,
-      "realised_roi": 0.1761,
-      "units": 63830,
-      "units_sold": 62419,
-      "sell_through": 0.9779,
-      "loss_making_positions": 5,
-      "prediction_gap": -0.0336
+      "positions": 495,
+      "invested": 666560342.0,
+      "predicted_profit": 121003565.0,
+      "realised_profit": 119840296.0,
+      "realised_roi": 0.1798,
+      "units": 63775,
+      "units_sold": 62523,
+      "sell_through": 0.9804,
+      "loss_making_positions": 4,
+      "prediction_gap": -0.0096
     },
     "last_year": {
-      "positions": 540,
-      "invested": 688200545.0,
-      "predicted_profit": 87793991.0,
-      "realised_profit": 84025816.0,
-      "realised_roi": 0.1221,
-      "units": 63071,
-      "units_sold": 57228,
-      "sell_through": 0.9074,
-      "loss_making_positions": 87,
-      "prediction_gap": -0.0429
+      "positions": 495,
+      "invested": 688493547.0,
+      "predicted_profit": 76254294.0,
+      "realised_profit": 73025081.0,
+      "realised_roi": 0.1061,
+      "units": 64178,
+      "units_sold": 57645,
+      "sell_through": 0.8982,
+      "loss_making_positions": 95,
+      "prediction_gap": -0.0423
     },
     "weekly": [
       {
-        "week": "2026-08-17",
-        "predicted_profit": 6915659.0,
-        "realised_profit": 6661703.0,
-        "invested": 39578276.0
-      },
-      {
         "week": "2026-08-24",
-        "predicted_profit": 6867958.0,
-        "realised_profit": 6922431.0,
-        "invested": 39776918.0
+        "predicted_profit": 5478159.0,
+        "realised_profit": 5493879.0,
+        "invested": 39005198.0
       },
       {
         "week": "2026-08-31",
-        "predicted_profit": 8123113.0,
-        "realised_profit": 5480248.0,
-        "invested": 46389631.0
+        "predicted_profit": 6636056.0,
+        "realised_profit": 4469644.0,
+        "invested": 40340335.0
       },
       {
         "week": "2026-09-07",
-        "predicted_profit": 8271591.0,
-        "realised_profit": 7854693.0,
-        "invested": 44986802.0
+        "predicted_profit": 7464616.0,
+        "realised_profit": 7149515.0,
+        "invested": 41338831.0
       },
       {
         "week": "2026-09-14",
-        "predicted_profit": 8292567.0,
-        "realised_profit": 7737271.0,
-        "invested": 43961171.0
+        "predicted_profit": 7561984.0,
+        "realised_profit": 7108360.0,
+        "invested": 42078258.0
       },
       {
         "week": "2026-09-21",
-        "predicted_profit": 8441715.0,
-        "realised_profit": 8220199.0,
-        "invested": 44081807.0
+        "predicted_profit": 7682741.0,
+        "realised_profit": 7546744.0,
+        "invested": 41881433.0
       },
       {
         "week": "2026-09-28",
-        "predicted_profit": 9206254.0,
-        "realised_profit": 10653191.0,
-        "invested": 48285540.0
+        "predicted_profit": 9646798.0,
+        "realised_profit": 11092444.0,
+        "invested": 49183009.0
       },
       {
         "week": "2026-10-05",
-        "predicted_profit": 12232177.0,
-        "realised_profit": 12002872.0,
-        "invested": 65036454.0
+        "predicted_profit": 12797770.0,
+        "realised_profit": 12354994.0,
+        "invested": 67619533.0
       },
       {
         "week": "2026-10-12",
-        "predicted_profit": 12404868.0,
-        "realised_profit": 12359280.0,
-        "invested": 63819321.0
+        "predicted_profit": 14576374.0,
+        "realised_profit": 15451447.0,
+        "invested": 73981065.0
       },
       {
         "week": "2026-10-19",
-        "predicted_profit": 12655581.0,
-        "realised_profit": 13353223.0,
-        "invested": 63317831.0
+        "predicted_profit": 14673984.0,
+        "realised_profit": 15512783.0,
+        "invested": 74208008.0
       },
       {
         "week": "2026-10-26",
-        "predicted_profit": 13271361.0,
-        "realised_profit": 11581197.0,
-        "invested": 69010698.0
+        "predicted_profit": 15305666.0,
+        "realised_profit": 12475248.0,
+        "invested": 77156120.0
       },
       {
         "week": "2026-11-02",
-        "predicted_profit": 16503137.0,
-        "realised_profit": 16894157.0,
-        "invested": 83460324.0
+        "predicted_profit": 18624701.0,
+        "realised_profit": 18713162.0,
+        "invested": 94215422.0
       }
     ],
     "top_positions": [
+      {
+        "cand_id": "F-BOM-LON|2026-10-12",
+        "item_id": "F-BOM-LON",
+        "name": "BOM \u2192 London (group seats)",
+        "destination": "London",
+        "week": "2026-10-12",
+        "units": 224.0,
+        "invested_planned": 9274720.0,
+        "invested_actual": 9196168.5,
+        "predicted_profit": 2025843.0,
+        "realised_profit": 2354706.0,
+        "predicted_demand": 372.9,
+        "actual_demand": 233.6,
+        "sold": 224.0,
+        "cancel_rate_actual": 0.0
+      },
+      {
+        "cand_id": "F-DEL-LON|2026-10-19",
+        "item_id": "F-DEL-LON",
+        "name": "DEL \u2192 London (group seats)",
+        "destination": "London",
+        "week": "2026-10-19",
+        "units": 175.0,
+        "invested_planned": 6982850.0,
+        "invested_actual": 6868004.3,
+        "predicted_profit": 1478471.6,
+        "realised_profit": 1786795.7,
+        "predicted_demand": 438.8,
+        "actual_demand": 198.8,
+        "sold": 175.0,
+        "cancel_rate_actual": 0.0
+      },
+      {
+        "cand_id": "F-DEL-LON|2026-11-02",
+        "item_id": "F-DEL-LON",
+        "name": "DEL \u2192 London (group seats)",
+        "destination": "London",
+        "week": "2026-11-02",
+        "units": 245.0,
+        "invested_planned": 9519965.0,
+        "invested_actual": 9563698.8,
+        "predicted_profit": 1773381.6,
+        "realised_profit": 1783604.7,
+        "predicted_demand": 415.6,
+        "actual_demand": 303.3,
+        "sold": 245.0,
+        "cancel_rate_actual": 0.1
+      },
+      {
+        "cand_id": "F-DEL-BAN|2026-11-02",
+        "item_id": "F-DEL-BAN",
+        "name": "DEL \u2192 Bangkok (group seats)",
+        "destination": "Bangkok",
+        "week": "2026-11-02",
+        "units": 620.0,
+        "invested_planned": 9559780.0,
+        "invested_actual": 9704719.0,
+        "predicted_profit": 1751146.5,
+        "realised_profit": 1773532.7,
+        "predicted_demand": 963.8,
+        "actual_demand": 648.0,
+        "sold": 620.0,
+        "cancel_rate_actual": 0.0
+      },
+      {
+        "cand_id": "F-BOM-LON|2026-11-02",
+        "item_id": "F-BOM-LON",
+        "name": "BOM \u2192 London (group seats)",
+        "destination": "London",
+        "week": "2026-11-02",
+        "units": 256.0,
+        "invested_planned": 10423552.0,
+        "invested_actual": 10726502.2,
+        "predicted_profit": 2273104.8,
+        "realised_profit": 1733012.8,
+        "predicted_demand": 312.6,
+        "actual_demand": 434.0,
+        "sold": 256.0,
+        "cancel_rate_actual": 0.1
+      },
       {
         "cand_id": "F-BOM-DUB|2026-11-02",
         "item_id": "F-BOM-DUB",
         "name": "BOM \u2192 Dubai (group seats)",
         "destination": "Dubai",
         "week": "2026-11-02",
-        "units": 497.0,
-        "invested_planned": 6631968.0,
-        "invested_actual": 6373811.3,
-        "predicted_profit": 1353153.8,
-        "realised_profit": 1705636.1,
+        "units": 462.0,
+        "invested_planned": 6004614.0,
+        "invested_actual": 5828181.5,
+        "predicted_profit": 1460992.2,
+        "realised_profit": 1682290.7,
         "predicted_demand": 1270.9,
         "actual_demand": 616.5,
-        "sold": 497.0,
+        "sold": 462.0,
         "cancel_rate_actual": 0.0
       },
       {
@@ -212,93 +361,13 @@
         "destination": "Dubai",
         "week": "2026-11-02",
         "units": 546.0,
-        "invested_planned": 8236410.0,
-        "invested_actual": 7947790.6,
-        "predicted_profit": 1341218.2,
-        "realised_profit": 1603181.6,
+        "invested_planned": 8110284.0,
+        "invested_actual": 7883648.4,
+        "predicted_profit": 1467307.8,
+        "realised_profit": 1667323.7,
         "predicted_demand": 1213.8,
         "actual_demand": 937.2,
         "sold": 546.0,
-        "cancel_rate_actual": 0.0
-      },
-      {
-        "cand_id": "F-DEL-LON|2026-10-19",
-        "item_id": "F-DEL-LON",
-        "name": "DEL \u2192 London (group seats)",
-        "destination": "London",
-        "week": "2026-10-19",
-        "units": 145.0,
-        "invested_planned": 5931370.0,
-        "invested_actual": 5949653.9,
-        "predicted_profit": 1359687.2,
-        "realised_profit": 1547555.0,
-        "predicted_demand": 438.8,
-        "actual_demand": 150.7,
-        "sold": 145.0,
-        "cancel_rate_actual": 0.0
-      },
-      {
-        "cand_id": "F-DEL-LON|2026-11-02",
-        "item_id": "F-DEL-LON",
-        "name": "DEL \u2192 London (group seats)",
-        "destination": "London",
-        "week": "2026-11-02",
-        "units": 175.0,
-        "invested_planned": 6938050.0,
-        "invested_actual": 6957974.8,
-        "predicted_profit": 1567436.0,
-        "realised_profit": 1533275.8,
-        "predicted_demand": 415.6,
-        "actual_demand": 227.0,
-        "sold": 175.0,
-        "cancel_rate_actual": 0.1
-      },
-      {
-        "cand_id": "F-DEL-LON|2026-10-26",
-        "item_id": "F-DEL-LON",
-        "name": "DEL \u2192 London (group seats)",
-        "destination": "London",
-        "week": "2026-10-26",
-        "units": 186.0,
-        "invested_planned": 7281342.0,
-        "invested_actual": 7256857.0,
-        "predicted_profit": 1425568.9,
-        "realised_profit": 1486039.6,
-        "predicted_demand": 393.3,
-        "actual_demand": 199.9,
-        "sold": 186.0,
-        "cancel_rate_actual": 0.0
-      },
-      {
-        "cand_id": "F-BOM-LON|2026-10-12",
-        "item_id": "F-BOM-LON",
-        "name": "BOM \u2192 London (group seats)",
-        "destination": "London",
-        "week": "2026-10-12",
-        "units": 155.0,
-        "invested_planned": 6792100.0,
-        "invested_actual": 6929436.2,
-        "predicted_profit": 1461880.9,
-        "realised_profit": 1443965.6,
-        "predicted_demand": 372.9,
-        "actual_demand": 174.6,
-        "sold": 155.0,
-        "cancel_rate_actual": 0.0
-      },
-      {
-        "cand_id": "F-DEL-BAN|2026-11-02",
-        "item_id": "F-DEL-BAN",
-        "name": "DEL \u2192 Bangkok (group seats)",
-        "destination": "Bangkok",
-        "week": "2026-11-02",
-        "units": 426.0,
-        "invested_planned": 6752526.0,
-        "invested_actual": 6825242.5,
-        "predicted_profit": 1456293.6,
-        "realised_profit": 1436925.0,
-        "predicted_demand": 963.8,
-        "actual_demand": 486.1,
-        "sold": 426.0,
         "cancel_rate_actual": 0.0
       },
       {
@@ -307,14 +376,14 @@
         "name": "BOM \u2192 London (group seats)",
         "destination": "London",
         "week": "2026-10-19",
-        "units": 150.0,
-        "invested_planned": 6609000.0,
-        "invested_actual": 6582739.5,
-        "predicted_profit": 1316368.4,
-        "realised_profit": 1355691.8,
+        "units": 192.0,
+        "invested_planned": 7991232.0,
+        "invested_actual": 8033350.7,
+        "predicted_profit": 1732600.6,
+        "realised_profit": 1665878.4,
         "predicted_demand": 329.3,
-        "actual_demand": 193.8,
-        "sold": 150.0,
+        "actual_demand": 259.4,
+        "sold": 192.0,
         "cancel_rate_actual": 0.1
       }
     ],
@@ -325,30 +394,14 @@
         "name": "DEL \u2192 Bali (group seats)",
         "destination": "Bali",
         "week": "2026-10-26",
-        "units": 240.0,
-        "invested_planned": 5974080.0,
-        "invested_actual": 6048544.3,
-        "predicted_profit": 963421.9,
-        "realised_profit": -400768.5,
+        "units": 252.0,
+        "invested_planned": 6128388.0,
+        "invested_actual": 6191200.6,
+        "predicted_profit": 1099188.8,
+        "realised_profit": -625127.1,
         "predicted_demand": 397.2,
         "actual_demand": 177.6,
         "sold": 177.6,
-        "cancel_rate_actual": 0.1
-      },
-      {
-        "cand_id": "H-SIN-M|2026-10-19",
-        "item_id": "H-SIN-M",
-        "name": "Orchard Plaza Hotel",
-        "destination": "Singapore",
-        "week": "2026-10-19",
-        "units": 60.0,
-        "invested_planned": 472320.0,
-        "invested_actual": 480622.6,
-        "predicted_profit": 97209.0,
-        "realised_profit": -13411.9,
-        "predicted_demand": 181.8,
-        "actual_demand": 41.5,
-        "sold": 41.5,
         "cancel_rate_actual": 0.1
       },
       {
@@ -357,14 +410,14 @@
         "name": "BLR \u2192 Goa (group seats)",
         "destination": "Goa",
         "week": "2026-10-26",
-        "units": 248.0,
-        "invested_planned": 907184.0,
-        "invested_actual": 902774.1,
-        "predicted_profit": 187442.1,
-        "realised_profit": -10401.4,
+        "units": 328.0,
+        "invested_planned": 1146032.0,
+        "invested_actual": 1143524.2,
+        "predicted_profit": 236963.1,
+        "realised_profit": -46268.7,
         "predicted_demand": 625.0,
-        "actual_demand": 187.6,
-        "sold": 187.6,
+        "actual_demand": 244.0,
+        "sold": 244.0,
         "cancel_rate_actual": 0.1
       },
       {
@@ -373,14 +426,14 @@
         "name": "Solang Valley Retreat",
         "destination": "Manali",
         "week": "2026-09-28",
-        "units": 48.0,
-        "invested_planned": 255456.0,
-        "invested_actual": 252868.8,
-        "predicted_profit": 49851.0,
-        "realised_profit": -3063.1,
+        "units": 60.0,
+        "invested_planned": 310620.0,
+        "invested_actual": 307076.2,
+        "predicted_profit": 57359.5,
+        "realised_profit": -9179.2,
         "predicted_demand": 160.3,
-        "actual_demand": 33.6,
-        "sold": 33.6,
+        "actual_demand": 43.8,
+        "sold": 43.8,
         "cancel_rate_actual": 0.1
       },
       {
@@ -389,14 +442,30 @@
         "name": "Seminyak Garden Villas",
         "destination": "Bali",
         "week": "2026-08-31",
-        "units": 96.0,
-        "invested_planned": 644064.0,
-        "invested_actual": 755041.2,
-        "predicted_profit": 117400.6,
-        "realised_profit": 8516.8,
+        "units": 72.0,
+        "invested_planned": 506232.0,
+        "invested_actual": 595047.9,
+        "predicted_profit": 94194.7,
+        "realised_profit": 4911.2,
         "predicted_demand": 141.3,
-        "actual_demand": 139.8,
-        "sold": 96.0,
+        "actual_demand": 103.3,
+        "sold": 72.0,
+        "cancel_rate_actual": 0.1
+      },
+      {
+        "cand_id": "H-LON-M|2026-08-31",
+        "item_id": "H-LON-M",
+        "name": "Kensington Park Hotel",
+        "destination": "London",
+        "week": "2026-08-31",
+        "units": 40.0,
+        "invested_planned": 323080.0,
+        "invested_actual": 366896.7,
+        "predicted_profit": 60697.7,
+        "realised_profit": 6786.1,
+        "predicted_demand": 125.3,
+        "actual_demand": 60.1,
+        "sold": 40.0,
         "cancel_rate_actual": 0.1
       }
     ]

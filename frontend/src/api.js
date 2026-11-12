@@ -5,14 +5,18 @@ export const STATIC = import.meta.env.VITE_STATIC === '1'
 export const DEFAULT_SETTINGS = { budget: 75e7, risk_aversion: 0.3, max_dest_share: 0.3, item_types: ['Hotel', 'Flight'], destinations: null }
 
 const j = async (r) => { if (!r.ok) throw new Error(`${r.status} ${await r.text()}`); return r.json() }
+export const LIVE_URL = 'https://tbo-inventory-optimizer-sggo.vercel.app'
+const needsServer = () => Promise.reject(new Error('server-only'))
 const staticApi = {
+  get: (path) => ({ suppliers: engine.suppliers, validation: engine.validation, 'data/contract': engine.contract, verify: engine.verification })[path.split('?')[0]]?.() ?? needsServer(),
   summary: () => engine.summary(),
   items: () => engine.items(),
   opportunities: (limit = 15) => engine.opportunities(limit),
   forecast: (id) => engine.forecast(id),
-  post: (path, body) => ({ optimize: engine.optimize, frontier: engine.frontier, 'budget-curve': engine.budgetCurve, explain: engine.explain })[path](body),
+  post: (path, body) => ({ optimize: engine.optimize, frontier: engine.frontier, 'budget-curve': engine.budgetCurve, explain: engine.explain, verify: engine.verification })[path]?.(body) ?? needsServer(),
 }
 const serverApi = {
+  get: (path) => fetch(`/api/${path}`).then(j),
   summary: () => fetch('/api/summary').then(j),
   items: () => fetch('/api/items').then(j),
   opportunities: (limit = 15) => fetch(`/api/opportunities?limit=${limit}`).then(j),

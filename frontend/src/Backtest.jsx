@@ -1,7 +1,7 @@
 import React from 'react'
 import { ComposedChart, Bar, Cell, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts'
 import { inr, pct, num, shortWeek } from './api'
-import { Card, Kpi, KpiRow, COLORS, tip, pnlTone, pnlFill } from './ui'
+import { Card, Kpi, KpiRow, COLORS, tip, pnlTone, pnlFill, Sim } from './ui'
 
 const cr = (v) => `₹${(v / 1e7).toFixed(1)}Cr`
 
@@ -14,12 +14,12 @@ export default function Backtest({ summary }) {
     ['AI optimizer (MILP)', ai], ['Greedy ROI ranking', gr], ["Last year's mix", ly],
   ]
   return (
-    <Card title="Back-test: would the plan have made money?"
-      sub={`Plan built as of ${bt.as_of} using only data available that day, then replayed against what really happened in the next ${bt.weeks} travel weeks (${bt.horizon_start} → ${bt.horizon_end}): real demand, real cancellations and the supplier's real quotes.`}>
+    <Card title={<>Back-test: would the plan have made money?<Sim /></>}
+      sub={`Realised result, not a forecast. The plan was built as of ${bt.as_of} using only data available that day, then replayed against what actually happened in the dataset over the next ${bt.weeks} travel weeks (${bt.horizon_start} → ${bt.horizon_end}): actual demand, cancellations, supplier quotes and each supplier's actual confirmation and refund behaviour. This is a different number from the Budget Optimizer's "expected uplift", which forecasts the coming quarter.`}>
       <KpiRow className="four">
         <Kpi label="Realised profit" num={ai.realised_profit} fmt={(v) => inr(v)} hint={`predicted ${inr(ai.predicted_profit)} · ${pct(ai.prediction_gap)} gap`} tone={pnlTone(ai.realised_profit)} />
         <Kpi label="Realised ROI" num={ai.realised_roi} fmt={(v) => pct(v)} hint={`on ${inr(ai.invested)} invested`} tone={pnlTone(ai.realised_roi)} />
-        <Kpi label="vs last year's mix" num={ai.realised_profit / ly.realised_profit - 1} fmt={(v) => `${v >= 0 ? '+' : ''}${pct(v)}`} hint={`${inr(ai.realised_profit - ly.realised_profit)} difference`} tone={pnlTone(ai.realised_profit - ly.realised_profit)} />
+        <Kpi label="Realised uplift vs last year's mix" num={ai.realised_profit / ly.realised_profit - 1} fmt={(v) => `${v >= 0 ? '+' : ''}${pct(v)}`} hint={`${inr(ai.realised_profit - ly.realised_profit)} difference`} tone={pnlTone(ai.realised_profit - ly.realised_profit)} />
         <Kpi label="Loss-making positions" num={ai.loss_making_positions} fmt={num} hint={`of ${ai.positions} · last year's mix: ${ly.loss_making_positions}`} tone="bad" />
       </KpiRow>
       <div className="row2" style={{ marginBottom: 0 }}>
@@ -48,7 +48,10 @@ export default function Backtest({ summary }) {
                 <td className={`r ${pnlTone(s.realised_profit)}`}>{inr(s.realised_profit)}</td><td className={`r ${pnlTone(s.realised_roi)}`}>{pct(s.realised_roi)}</td><td className="r">{pct(s.sell_through, 0)}</td><td className={`r ${s.loss_making_positions > 0 ? 'bad' : ''}`}>{s.loss_making_positions}</td></tr>
             ))}</tbody>
           </table></div>
-          <p className="note">Realised profit landed within {pct(Math.abs(ai.prediction_gap))} of the prediction, so the risk model is well calibrated. Copying last year's mix tied money up in {ly.loss_making_positions} positions that lost money.</p>
+          <p className="note">Realised profit landed within {pct(Math.abs(ai.prediction_gap))} of the prediction, so the risk model is well calibrated. Copying last year's mix tied money up in {ly.loss_making_positions} positions that lost money.
+            {gr.realised_profit > ai.realised_profit
+              ? <> The greedy ranking earned {inr(gr.realised_profit - ai.realised_profit)} more in absolute terms, but needed {inr(gr.invested - ai.invested)} more capital: the optimizer's return per rupee is higher ({pct(ai.realised_roi)} vs {pct(gr.realised_roi)}) and it keeps the rest of the budget free.</>
+              : <> It also beat the greedy ranking by {inr(ai.realised_profit - gr.realised_profit)}.</>}</p>
         </div>
       </div>
     </Card>

@@ -5,6 +5,7 @@ Produces (in backend/data/):
   calendar.csv       holidays, festivals and destination events per date (external signals)
   daily.csv          per item per day: searches, bookings, sold-out flag, price, cancellations
   rate_quotes.csv    historical supplier pre-buy quotes by lead time
+  suppliers.csv / supplier_history.csv   supplier master + allotment-request history (see suppliers.py)
   _ground_truth.csv  true (unconstrained) demand - used ONLY to evaluate the unconstraining step
 
 The demand process deliberately contains the effects the real problem talks about:
@@ -15,6 +16,7 @@ peaks (=> sold-outs that hide true demand), searches that reflect true demand
 import numpy as np
 import pandas as pd
 
+from .suppliers import generate_supplier_data
 from .config import DATA_DIR, SEED, HIST_START, HIST_END, HORIZON_END, LEAD_OPTIONS
 
 rng = np.random.default_rng(SEED)
@@ -238,6 +240,7 @@ def generate():
     daily.to_csv(DATA_DIR / "daily.csv", index=False)
     quotes.to_csv(DATA_DIR / "rate_quotes.csv", index=False)
     truth.to_csv(DATA_DIR / "_ground_truth.csv", index=False)
+    generate_supplier_data(items)
     print(f"items={len(items)} daily_rows={len(daily):,} quotes={len(quotes):,} "
           f"sold_out_rate={daily.sold_out.mean():.1%}")
 

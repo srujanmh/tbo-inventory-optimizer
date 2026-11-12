@@ -143,6 +143,46 @@ function lastYear(st) {
 
 const strip = (s) => { const { histogram, ...r } = s; return r }
 
+// Same logic as Optimizer.unused_budget on the server: why part of the budget stays uninvested
+function unusedBudget(st, ksel, lam = st.risk_aversion) {
+  const B = st.budget
+  const inFilter = new Set(filtered(st).map(([, i]) => i))
+  const nDest = new Set(filtered(st).map(([c]) => c.destination)).size
+  const share = Math.max(st.max_dest_share, 1 / Math.max(nDest, 1)), cap = share * B
+  const score = (c, k) => (1 - lam) * c.bexp[k] + lam * c.btail[k]
+  const destInv = {}
+  let invested = 0
+  viable.forEach((c, i) => { if (ksel[i]) { const v = ksel[i] * c.blk.cost; invested += v; destInv[c.destination] = (destInv[c.destination] || 0) + v } })
+  const left = B - invested
+  const buckets = {}
+  viable.forEach((c, i) => {
+    let nGood = 0
+    for (let k = 0; k < c.bexp.length; k++) if (score(c, k) > 0) nGood = k + 1
+    const k0 = ksel[i]
+    if (k0 >= nGood) return
+    const r = !inFilter.has(i) ? 'filtered' : (destInv[c.destination] || 0) + c.blk.cost > cap + 1e-6 ? 'dest_cap' : c.blk.cost > left + 1e-6 ? 'too_big' : 'other'
+    const b = (buckets[r] ||= { cost: 0, positions: 0 })
+    b.cost += (nGood - k0) * c.blk.cost; b.positions++
+  })
+  const capped = Object.entries(destInv).filter(([, v]) => v >= cap * 0.995).map(([d]) => d).sort()
+  const labels = {
+    dest_cap: `Destination limit: ${capped.length ? capped.join(', ') : 'some destinations'} already hold the maximum ${Math.round(share * 100)}% of the budget, so more profitable stock there is not bought (diversification rule)`,
+    too_big: 'Leftover is smaller than the next quantity block of any remaining profitable position',
+    filtered: 'Profitable options exist but are excluded by the inventory-type or destination filters',
+    other: 'Allocation granularity: the in-browser allocator buys whole quantity blocks',
+  }
+  const reasons = Object.entries(buckets).map(([code, b]) => ({ code, label: labels[code], blocked_cost: b.cost, positions: b.positions }))
+    .sort((a, b) => b.blocked_cost - a.blocked_cost)
+  let summary
+  if (left <= 0.01 * B) summary = 'The budget is fully used.'
+  else if (!reasons.some((r) => r.code !== 'filtered')) {
+    const f = reasons.find((r) => r.code === 'filtered')
+    summary = f ? `Every option inside your filters is already bought up to its profitable limit. Another ₹${(f.blocked_cost / 1e7).toFixed(1)} Cr of profitable inventory exists outside the selected inventory types or destinations; widen the filters to use the rest of the budget.`
+      : 'Every available position is already bought up to the point where one more unit stops paying: past that point the expected profit after cancellations, unsold-stock losses and the risk penalty is zero or negative, so investing the rest would lower profit. Keeping it uninvested is the optimal decision.'
+  } else summary = reasons[0].label + '.'
+  return { unused: left, unused_share: left / B, summary, reasons, capped_destinations: capped, destination_cap: cap }
+}
+
 export const engine = {
   async summary() { await load(); return D.summary },
   async items() { await load(); return D.items },
@@ -173,7 +213,7 @@ export const engine = {
       units_in_soldout_windows: sum(plan.filter((r) => r.sold_out_risk >= 0.5).map((r) => r.expected_sold)),
     })
     return {
-      stats, plan, by_destination: byDest, by_week: byWeek,
+      stats, plan, by_destination: byDest, by_week: byWeek, unused_budget: unusedBudget(st, ksel),
       baselines: { greedy_roi_ranking: strip(evaluate(greedyRoi(st))), last_year_proportional: strip(evaluate(lastYear(st))) },
     }
   },
@@ -191,7 +231,11 @@ export const engine = {
       return { budget: B, expected_profit: s.expected_profit, invested: s.invested, roi: s.roi, cvar10: s.cvar10 }
     })
   },
-  async explain(r) { return { explanation: explainText(r), llm: null } },
+  async explain(r) { const sections = explainSections(r); return { explanation: sections.map((x) => x.text).join(' '), sections, llm: null } },
+  async suppliers() { await load(); return D.extra.suppliers },
+  async validation() { await load(); return D.extra.validation },
+  async contract() { await load(); return D.extra.contract },
+  async verification() { await load(); return D.extra.verification },
 }
 
 const inr = (x) => {
@@ -201,17 +245,35 @@ const inr = (x) => {
   return `₹${Math.round(x).toLocaleString('en-IN')}`
 }
 
-function explainText(r) {
+// JS port of pipeline/explain.py explanation_sections (keeps the static site self-contained)
+function explainSections(r) {
+  const pctS = (v) => `${Math.round(v * 100)}%`
   const drivers = (r.drivers || []).slice(0, 3).map((d) => `${d.driver.toLowerCase()} (${d.effect >= 0 ? '+' : ''}${d.effect.toFixed(0)}%)`).join(', ')
   const ev = r.events?.length ? ` The week overlaps ${r.events.join(', ')}.` : ''
-  const so = r.sold_out_risk
-  const soTxt = so >= 0.4
-    ? `In this season the property/route was sold out on ${Math.round(so * 100)}% of days historically, so pre-buying secures inventory TBO would otherwise lose.`
-    : `Historical sold-out rate in this window is ${Math.round(so * 100)}%, so the case is mainly margin, not availability.`
-  return [
-    `Buy ${r.units} ${r.unit}s of ${r.name} (${r.destination}) for the week of ${r.week} at ${inr(r.unit_cost)}/${r.unit} — total ${inr(r.investment)}. Purchase by ${r.buy_by}; waiting until the last minute would cost about ${inr(r.cost_if_wait)}/${r.unit}.`,
-    `Forecast demand is ${Math.round(r.demand_p50)} (range ${Math.round(r.demand_p10)}–${Math.round(r.demand_p90)}) for the week, driven mostly by ${drivers}.${ev}`,
-    soTxt,
-    `Recommended selling price ${inr(r.sell_price)} vs market ${inr(r.market_price)}. Expected profit ${inr(r.expected_profit)} with ${Math.round(r.sell_through * 100)}% expected sell-through; in the worst 5% of scenarios profit is ${inr(r.worst5_profit)}.`,
-  ].join(' ')
+  const so = r.sold_out_risk || 0
+  const soTxt = so >= 0.4 ? ` It was sold out on ${pctS(so)} of days in this season in past years, so pre-buying secures stock TBO would otherwise lose.`
+    : ` Past sold-out rate in this season is ${pctS(so)}, so the case is mainly margin rather than availability.`
+  const out = [{ title: 'Why this item and week', text: `Forecast demand is ${Math.round(r.demand_p50)} ${r.unit}s (80% range ${Math.round(r.demand_p10)}–${Math.round(r.demand_p90)}), driven mostly by ${drivers || 'its normal baseline'}.${ev}${soTxt}` }]
+  const cr = r.critical_ratio
+  let qty = `Buy ${r.units} ${r.unit}s (${inr(r.investment)})`
+  if (cr) qty += `. Here ${cr < 0.5 ? 'an unsold unit loses more than a sold unit earns, so the plan buys cautiously' : 'a sold unit earns more than an unsold unit loses, so the plan buys generously'}: the profit-maximising quantity is the level that demand exceeds in ${pctS(1 - cr)} of scenarios (newsvendor critical ratio ${cr.toFixed(2)})`
+  if (r.q_star && r.units < r.q_star * 0.95) qty += `; the plan buys less than that level (${Math.round(r.q_star)}) because the risk setting or budget favours other positions`
+  out.push({ title: 'How much', text: `${qty}. Expected sell-through is ${pctS(r.sell_through)}.` })
+  const sups = r.suppliers || []
+  if (r.supplier && sups.length) {
+    const me = sups.find((o) => o.supplier_id === r.supplier_id)
+    const alt = sups.filter((o) => o.supplier_id !== r.supplier_id).map((o) => !o.eligible ? `${o.supplier} is not eligible (${o.reason || 'unavailable'})`
+      : !o.viable ? `${o.supplier} would not be profitable (effective cost ${inr(o.effective_cost)})`
+        : `${o.supplier} would earn ${inr(o.exp_profit || 0)} at the best quantity (effective cost ${inr(o.effective_cost)}, ${pctS(o.reliability)} confirmation)`)
+    out.push({ title: 'Which supplier', text: `${r.supplier} gives the highest expected profit${me?.exp_profit != null ? ` (${inr(me.exp_profit)} at its best quantity)` : ''}: quoted ${inr(r.supplier_cost || r.unit_cost)}, ${pctS(r.supplier_reliability)} of allotments confirmed historically, so the effective cost including re-buying unconfirmed units late is ${inr(r.unit_cost)}/${r.unit}. ${alt.length ? alt.join('; ') + '.' : ''}` })
+  }
+  const pm = r.price_mult
+  let pt = `Sell at ${inr(r.sell_price)} vs a market rate of ${inr(r.market_price)}`
+  if (pm > 1.001) pt += ` (+${pctS(pm - 1)}): demand is strong enough that the higher margin outweighs the agents lost to cheaper wholesalers`
+  else if (pm < 0.999) pt += ` (${pctS(pm - 1)}): pricing below market sells more of the pre-bought stock, which pays more than the lost margin`
+  else if (pm) pt += ' (at market): moving the price either way lowers expected profit'
+  out.push({ title: 'Selling price', text: pt + '.' })
+  out.push({ title: 'Timing', text: `Buy by ${r.buy_by}. Waiting until the last minute would cost about ${inr(r.cost_if_wait)}/${r.unit}, i.e. ${inr(r.saving_vs_wait || 0)} more for this position.` })
+  out.push({ title: 'Profit and risk', text: `Expected profit ${inr(r.expected_profit)}. About ${pctS(r.cancel_rate || 0)} of sold units are expected to cancel (cancelled units are not resold) and unsold units are released for a ${pctS(r.salvage_rate || 0)} refund — both are already in the profit figure. In the worst 5% of simulated demand scenarios the position makes ${inr(r.worst5_profit)}.` })
+  return out
 }
