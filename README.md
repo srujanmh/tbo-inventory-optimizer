@@ -19,7 +19,7 @@ Every position comes with expected profit, worst-case profit and a plain-English
 | Item | Where |
 |---|---|
 | 10-slide presentation | https://claude.ai/artifact/RZRwhzG6t7XW9f32pmHgpo (export to PPTX or PDF from the deck) |
-| Live prototype | https://claude.ai/artifact/XM6d4qBCJyEeFcAQNUKR3n |
+| Live prototype | https://tbo-inventory-optimizer-sggo.vercel.app (FastAPI + MILP on Vercel) · browser-only copy: https://claude.ai/artifact/XM6d4qBCJyEeFcAQNUKR3n |
 | Code | https://github.com/srujanmh/tbo-inventory-optimizer |
 | Pitch video | `docs/TBO_Inventory_Intelligence_pitch.mp4` (2:11, 1080p, voice-over and captions) |
 | Video pitch script | `docs/video_pitch_script.md` |
