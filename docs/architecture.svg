@@ -1,0 +1,186 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1840" height="1180" viewBox="0 0 1840 1180">
+<defs>
+<marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+<marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M0,0 L10,5 L0,10 z" fill="#B45309"/></marker>
+<filter id="sh" x="-5%" y="-5%" width="110%" height="115%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.08"/></filter>
+</defs>
+<rect width="1840" height="1180" fill="#F8FAFC"/>
+<text x="920.0" y="52" font-family="Inter, DejaVu Sans, sans-serif" font-size="30" font-weight="700" fill="#0F172A" text-anchor="middle" >AI Inventory Optimization Platform — TBO.com</text>
+<text x="920.0" y="84" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="400" fill="#475569" text-anchor="middle" >Buy the right inventory, at the right time, within the right budget, to maximize risk-adjusted profit</text>
+<rect x="40" y="120" width="310" height="900" rx="18" fill="#EFF6FF" stroke="#93C5FD" stroke-width="2"/>
+<text x="195.0" y="158" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#1D4ED8" text-anchor="middle" letter-spacing="1">1 · DATA SOURCES</text>
+<rect x="410" y="120" width="310" height="900" rx="18" fill="#F0FDFA" stroke="#5EEAD4" stroke-width="2"/>
+<text x="565.0" y="158" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F766E" text-anchor="middle" letter-spacing="1">2 · DATA LAYER</text>
+<rect x="780" y="120" width="340" height="900" rx="18" fill="#F5F3FF" stroke="#C4B5FD" stroke-width="2"/>
+<text x="950.0" y="158" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#6D28D9" text-anchor="middle" letter-spacing="1">3 · INTELLIGENCE ENGINE</text>
+<rect x="1180" y="120" width="320" height="900" rx="18" fill="#FFFBEB" stroke="#FCD34D" stroke-width="2"/>
+<text x="1340.0" y="158" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#B45309" text-anchor="middle" letter-spacing="1">4 · OPTIMIZATION ENGINE</text>
+<rect x="1545" y="120" width="265" height="900" rx="18" fill="#F0FDF4" stroke="#86EFAC" stroke-width="2"/>
+<text x="1677.5" y="158" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#15803D" text-anchor="middle" letter-spacing="1">5 · DECISION PLATFORM</text>
+<rect x="60" y="185" width="270" height="112" rx="12" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="60" y="197" width="5" height="88" rx="2.5" fill="#1D4ED8"/>
+<text x="80" y="215" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >Historical Bookings</text>
+<text x="80" y="239" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Hotels, flights, routes</text>
+<text x="80" y="260" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Booking &amp; travel dates, price</text>
+<rect x="60" y="321" width="270" height="112" rx="12" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="60" y="333" width="5" height="88" rx="2.5" fill="#1D4ED8"/>
+<text x="80" y="351" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >Search Logs</text>
+<text x="80" y="375" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Look-to-book ratio</text>
+<text x="80" y="396" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Searches that didn't convert</text>
+<rect x="60" y="457" width="270" height="112" rx="12" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="60" y="469" width="5" height="88" rx="2.5" fill="#1D4ED8"/>
+<text x="80" y="487" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >Sold-out Events</text>
+<text x="80" y="511" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Unmet (censored) demand</text>
+<text x="80" y="532" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Per hotel / route / date</text>
+<rect x="60" y="593" width="270" height="112" rx="12" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="60" y="605" width="5" height="88" rx="2.5" fill="#1D4ED8"/>
+<text x="80" y="623" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >Supplier Rates</text>
+<text x="80" y="647" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Pre-buy &amp; contract prices</text>
+<text x="80" y="668" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Allotment availability</text>
+<rect x="60" y="729" width="270" height="112" rx="12" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="60" y="741" width="5" height="88" rx="2.5" fill="#1D4ED8"/>
+<text x="80" y="759" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >Cancellations</text>
+<text x="80" y="783" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Cancellation &amp; no-show history</text>
+<text x="80" y="804" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Refund / release policies</text>
+<rect x="60" y="865" width="270" height="112" rx="12" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="60" y="877" width="5" height="88" rx="2.5" fill="#1D4ED8"/>
+<text x="80" y="895" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >External Signals</text>
+<text x="80" y="919" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Holidays, festivals, events</text>
+<text x="80" y="940" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Weather, fuel, competitor fares</text>
+<rect x="430" y="185" width="270" height="150" rx="12" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="430" y="197" width="5" height="126" rx="2.5" fill="#0F766E"/>
+<text x="450" y="215" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >Ingestion / ETL</text>
+<text x="450" y="239" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Scheduled batch pipelines</text>
+<text x="450" y="260" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Python · Airflow</text>
+<text x="450" y="281" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Validation &amp; schema checks</text>
+<rect x="430" y="395" width="270" height="150" rx="12" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="430" y="407" width="5" height="126" rx="2.5" fill="#0F766E"/>
+<text x="450" y="425" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >Cleaning &amp; Unconstraining</text>
+<text x="450" y="449" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Recover true demand from</text>
+<text x="450" y="470" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >sold-out (censored) days</text>
+<text x="450" y="491" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Dedupe, outlier handling</text>
+<rect x="430" y="605" width="270" height="150" rx="12" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="430" y="617" width="5" height="126" rx="2.5" fill="#0F766E"/>
+<text x="450" y="635" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >Feature Engineering</text>
+<text x="450" y="659" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Seasonality, lead time, L2B</text>
+<text x="450" y="680" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Event &amp; holiday flags</text>
+<text x="450" y="701" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Price index, cancel rate</text>
+<rect x="430" y="815" width="270" height="150" rx="12" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="430" y="827" width="5" height="126" rx="2.5" fill="#0F766E"/>
+<text x="450" y="845" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >Feature Store</text>
+<text x="450" y="869" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >PostgreSQL + Parquet</text>
+<text x="450" y="890" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Versioned training data</text>
+<text x="450" y="911" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Shared by all models</text>
+<line x1="565" y1="335" x2="565" y2="393" stroke="#475569" stroke-width="2"  marker-end="url(#arr)"/>
+<line x1="565" y1="545" x2="565" y2="603" stroke="#475569" stroke-width="2"  marker-end="url(#arr)"/>
+<line x1="565" y1="755" x2="565" y2="813" stroke="#475569" stroke-width="2"  marker-end="url(#arr)"/>
+<rect x="800" y="185" width="300" height="150" rx="12" fill="#FFFFFF" stroke="#6D28D9" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="800" y="197" width="5" height="126" rx="2.5" fill="#6D28D9"/>
+<text x="820" y="215" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >Demand Forecasting</text>
+<text x="820" y="239" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >XGBoost / Prophet (quantile)</text>
+<text x="820" y="260" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >P10 · P50 · P90 demand</text>
+<text x="820" y="281" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >per item × travel date</text>
+<rect x="800" y="395" width="300" height="150" rx="12" fill="#FFFFFF" stroke="#6D28D9" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="800" y="407" width="5" height="126" rx="2.5" fill="#6D28D9"/>
+<text x="820" y="425" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >Opportunity Scorer</text>
+<text x="820" y="449" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Unmet demand × margin</text>
+<text x="820" y="470" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Ranks hotels, routes,</text>
+<text x="820" y="491" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >destinations &amp; periods</text>
+<rect x="800" y="605" width="300" height="150" rx="12" fill="#FFFFFF" stroke="#6D28D9" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="800" y="617" width="5" height="126" rx="2.5" fill="#6D28D9"/>
+<text x="820" y="635" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >Pricing Model</text>
+<text x="820" y="659" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Price elasticity of demand</text>
+<text x="820" y="680" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Optimal selling price</text>
+<text x="820" y="701" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Procurement price trend</text>
+<rect x="800" y="815" width="300" height="150" rx="12" fill="#FFFFFF" stroke="#6D28D9" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="800" y="827" width="5" height="126" rx="2.5" fill="#6D28D9"/>
+<text x="820" y="845" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >Risk Model</text>
+<text x="820" y="869" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Monte Carlo demand scenarios</text>
+<text x="820" y="890" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Cancellation probability</text>
+<text x="820" y="911" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Unsold-loss · CVaR</text>
+<rect x="1200" y="185" width="280" height="130" rx="12" fill="#FEF3C7" stroke="#B45309" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="1200" y="197" width="5" height="106" rx="2.5" fill="#B45309"/>
+<text x="1220" y="215" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >Budget &amp; Constraints</text>
+<text x="1220" y="239" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Max budget (user input)</text>
+<text x="1220" y="260" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Risk appetite λ, min margin</text>
+<text x="1220" y="281" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Per-destination caps</text>
+<rect x="1200" y="365" width="280" height="250" rx="14" fill="#FFFFFF" stroke="#B45309" stroke-width="3" filter="url(#sh)"/>
+<text x="1340" y="400" font-family="Inter, DejaVu Sans, sans-serif" font-size="19" font-weight="800" fill="#0F172A" text-anchor="middle" >Budget Allocator</text>
+<text x="1340" y="424" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="500" fill="#B45309" text-anchor="middle" >MILP solver · OR-Tools / PuLP</text>
+<rect x="1218" y="442" width="244" height="92" rx="8" fill="#FFFBEB" stroke="#FCD34D"/>
+<text x="1340" y="468" font-family="Inter, DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#92400E" text-anchor="middle" >maximize</text>
+<text x="1340" y="492" font-family="Inter, DejaVu Sans, sans-serif" font-size="17" font-weight="700" fill="#0F172A" text-anchor="middle" font-style="italic">Σ E[profit] − λ · Risk</text>
+<text x="1340" y="520" font-family="Inter, DejaVu Sans, sans-serif" font-size="14" font-weight="500" fill="#0F172A" text-anchor="middle" font-style="italic">subject to  Σ cost ≤ Budget</text>
+<text x="1340" y="562" font-family="Inter, DejaVu Sans, sans-serif" font-size="13" font-weight="600" fill="#475569" text-anchor="middle" >Newsvendor logic per item:</text>
+<text x="1340" y="584" font-family="Inter, DejaVu Sans, sans-serif" font-size="13" font-weight="400" fill="#475569" text-anchor="middle" >how many units to pre-buy</text>
+<rect x="1200" y="655" width="280" height="130" rx="12" fill="#FEF3C7" stroke="#B45309" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="1200" y="667" width="5" height="106" rx="2.5" fill="#B45309"/>
+<text x="1220" y="685" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >Buy Plan</text>
+<text x="1220" y="709" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >What to buy · How many</text>
+<text x="1220" y="730" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >When to buy · Sell price</text>
+<text x="1220" y="751" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Expected profit &amp; risk</text>
+<rect x="1200" y="815" width="280" height="150" rx="12" fill="#FFFFFF" stroke="#B45309" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="1200" y="827" width="5" height="126" rx="2.5" fill="#B45309"/>
+<text x="1220" y="845" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >What-if Simulator</text>
+<text x="1220" y="869" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Change budget / risk λ</text>
+<text x="1220" y="890" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Stress-test demand drops</text>
+<text x="1220" y="911" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >Compare scenarios</text>
+<line x1="1340" y1="315" x2="1340" y2="363" stroke="#475569" stroke-width="2"  marker-end="url(#arr)"/>
+<line x1="1340" y1="615" x2="1340" y2="653" stroke="#475569" stroke-width="2"  marker-end="url(#arr)"/>
+<rect x="1575" y="185" width="210" height="112" rx="12" fill="#FFFFFF" stroke="#15803D" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="1575" y="197" width="5" height="88" rx="2.5" fill="#15803D"/>
+<text x="1595" y="215" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >REST API</text>
+<text x="1595" y="239" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >FastAPI</text>
+<text x="1595" y="260" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >/forecast /optimize</text>
+<rect x="1575" y="325" width="210" height="240" rx="12" fill="#FFFFFF" stroke="#15803D" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="1575" y="337" width="5" height="216" rx="2.5" fill="#15803D"/>
+<text x="1595" y="355" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >Dashboard</text>
+<text x="1595" y="379" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >React + Recharts</text>
+<text x="1595" y="400" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >• Budget input</text>
+<text x="1595" y="421" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >• Ranked buy list</text>
+<text x="1595" y="442" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >• Demand heatmap</text>
+<text x="1595" y="463" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >• Risk vs return</text>
+<text x="1595" y="484" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >• Price suggestions</text>
+<text x="1595" y="505" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >• Exportable plan</text>
+<rect x="1575" y="593" width="210" height="135" rx="12" fill="#FFFFFF" stroke="#15803D" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="1575" y="605" width="5" height="111" rx="2.5" fill="#15803D"/>
+<text x="1595" y="623" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >AI Explainer</text>
+<text x="1595" y="647" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >LLM summaries:</text>
+<text x="1595" y="668" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >"Why buy Goa</text>
+<text x="1595" y="689" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >  in Dec?"</text>
+<rect x="1575" y="756" width="210" height="209" rx="12" fill="#DCFCE7" stroke="#15803D" stroke-width="1.5" filter="url(#sh)"/>
+<rect x="1575" y="768" width="5" height="185" rx="2.5" fill="#15803D"/>
+<text x="1595" y="786" font-family="Inter, DejaVu Sans, sans-serif" font-size="16" font-weight="700" fill="#0F172A" text-anchor="start" >TBO Actions</text>
+<text x="1595" y="810" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >• Pre-buy / allotments</text>
+<text x="1595" y="831" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >• Supplier integration</text>
+<text x="1595" y="852" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >• Pricing updates</text>
+<text x="1595" y="873" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" ></text>
+<text x="1595" y="894" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >→ Maximize</text>
+<text x="1595" y="915" font-family="Inter, DejaVu Sans, sans-serif" font-size="13.5" font-weight="400" fill="#475569" text-anchor="start" >  bookable inventory</text>
+<line x1="1680" y1="297" x2="1680" y2="323" stroke="#475569" stroke-width="2"  marker-end="url(#arr)"/>
+<line x1="1680" y1="565" x2="1680" y2="591" stroke="#475569" stroke-width="2"  marker-end="url(#arr)"/>
+<line x1="1680" y1="728" x2="1680" y2="754" stroke="#475569" stroke-width="2"  marker-end="url(#arr)"/>
+<path d="M330,241 C380,241 380,260 428,260" fill="none" stroke="#94A3B8" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M330,377 C380,377 380,260 428,260" fill="none" stroke="#94A3B8" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M330,513 C380,513 380,260 428,260" fill="none" stroke="#94A3B8" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M330,649 C380,649 380,260 428,260" fill="none" stroke="#94A3B8" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M330,785 C380,785 380,260 428,260" fill="none" stroke="#94A3B8" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M330,921 C380,921 380,260 428,260" fill="none" stroke="#94A3B8" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M700,890 C750,890 750,260 798,260" fill="none" stroke="#94A3B8" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M700,890 C750,890 750,470 798,470" fill="none" stroke="#94A3B8" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M700,890 C750,890 750,680 798,680" fill="none" stroke="#94A3B8" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M700,890 C750,890 750,890 798,890" fill="none" stroke="#94A3B8" stroke-width="1.6" marker-end="url(#arr)"/>
+<path d="M1100,260 C1150,260 1150,490 1198,490" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arr)"/>
+<path d="M1100,470 C1150,470 1150,490 1198,490" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arr)"/>
+<path d="M1100,680 C1150,680 1150,490 1198,490" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arr)"/>
+<path d="M1100,890 C1150,890 1150,490 1198,490" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arr)"/>
+<path d="M1480,720 C1530,720 1530,241 1573,241" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arr)"/>
+<path d="M1573,445 C1530,445 1530,890 1482,890" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arr)"/>
+<path d="M1680,965 L1680,1075 L565,1075 L565,967" fill="none" stroke="#B45309" stroke-width="2.5" stroke-dasharray="9 6" marker-end="url(#arrG)"/>
+<rect x="830" y="1056" width="620" height="38" rx="19" fill="#FFFBEB" stroke="#FCD34D"/>
+<text x="1140" y="1081" font-family="Inter, DejaVu Sans, sans-serif" font-size="15" font-weight="600" fill="#92400E" text-anchor="middle" >Feedback loop: actual sell-through &amp; cancellations → retrain models</text>
+<text x="40" y="1140" font-family="Inter, DejaVu Sans, sans-serif" font-size="13" font-weight="400" fill="#64748B" text-anchor="start" >Solid arrows = data / decision flow   ·   Dashed = user-driven what-if &amp; learning loop</text>
+<text x="1800" y="1140" font-family="Inter, DejaVu Sans, sans-serif" font-size="13" font-weight="500" fill="#64748B" text-anchor="end" >Hackathon: Inventory Optimization for TBO.com</text>
+</svg>

@@ -1,0 +1,8 @@
+node_modules/
+backend/artifacts/
+backend/data/
+frontend/dist-site/
+__pycache__/
+*.pyc
+.venv/
+.vercel/
