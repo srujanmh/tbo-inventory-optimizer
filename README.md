@@ -16,15 +16,17 @@ Every position comes with expected profit, worst-case profit and a plain-English
 
 ## Submission materials
 
+Everything for the submission is in this repository:
+
 | Item | Where |
 |---|---|
 | Live prototype | https://tbo-inventory-optimizer-sggo.vercel.app (FastAPI + MILP on Vercel) |
-| Code | https://github.com/srujanmh/tbo-inventory-optimizer |
-| **Video pitch (no voice, on-screen captions)** | [`docs/TBO_Inventory_Intelligence_pitch_silent.mp4`](docs/TBO_Inventory_Intelligence_pitch_silent.mp4) (3:31, 1080p, current version) |
-| **Project report** | [`docs/TBO_Inventory_Intelligence_report.pdf`](docs/TBO_Inventory_Intelligence_report.pdf) (9 pages) · editable version: https://claude.ai/artifact/TnxtE9BakzNaXHrdMgUrGF |
-| 10-slide presentation | https://claude.ai/artifact/RZRwhzG6t7XW9f32pmHgpo (export to PPTX or PDF from the deck) |
-| Earlier video with voice-over | `docs/TBO_Inventory_Intelligence_pitch.mp4` (2:11; shows the earlier version and its earlier figures) |
-| Video pitch script | `docs/video_pitch_script.md` |
+| Code | this repository: `backend/` (models, optimizer, API) and `frontend/` (React app) |
+| **10-slide presentation** | [`docs/TBO_Inventory_Intelligence_deck.pdf`](docs/TBO_Inventory_Intelligence_deck.pdf) · PowerPoint: [`docs/TBO_Inventory_Intelligence_deck.pptx`](docs/TBO_Inventory_Intelligence_deck.pptx) · [speaker notes](docs/TBO_Inventory_Intelligence_speaker_notes.md) |
+| **Video pitch (no voice, on-screen captions)** | [`docs/TBO_Inventory_Intelligence_pitch_silent.mp4`](docs/TBO_Inventory_Intelligence_pitch_silent.mp4) (3:31, 1080p) |
+| **Project report** | [`docs/TBO_Inventory_Intelligence_report.pdf`](docs/TBO_Inventory_Intelligence_report.pdf) (9 pages) |
+| Earlier video with voice-over | [`docs/TBO_Inventory_Intelligence_pitch.mp4`](docs/TBO_Inventory_Intelligence_pitch.mp4) (2:11; earlier version, earlier figures) |
+| Video pitch script | [`docs/video_pitch_script.md`](docs/video_pitch_script.md) |
 | Architecture diagram | `docs/architecture.png` (editable `docs/architecture.svg`) |
 
 ![Home](docs/screenshot_home.png)
